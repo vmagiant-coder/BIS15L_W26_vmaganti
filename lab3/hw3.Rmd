@@ -19,7 +19,9 @@ In order to answer the questions below, you will need to do a little online rese
 
 **1. Make three new vectors that show the name, height in feet, and height in meters of the five tallest mountains in the world.**
 ```{r}
-
+name <- c("mount everest", "k2", "kangchenjunga", "lhotse","makalu")
+feet <- c(29032, 28251, 28169, 27940, 27838)
+meters <- c(8849, 8611, 8586, 8516, 8485)
 ```
 
 **2. Combine these vectors into a data frame called `mountains`.**

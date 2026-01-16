@@ -40,11 +40,13 @@ names(msleep)
 
 **3. Make a plot that shows the number of mammals in each vore type. Which vore type is most represented in the data?**
 
+# Herbivores are most represented in the data.
+
 ```{r}
 ggplot(data=msleep,
        mapping=aes(x=vore))+
   geom_bar(mapping=aes(fill=vore))+
-  labs(title= "Number of Mammals in Each Vore Type")
+  labs(title= "Number of Mammals in Each Vore Type", x="Vore Type", y="Number of Mammals")
 ```
 
 
@@ -68,7 +70,7 @@ summary(msleep$bodywt)
 ggplot(data=msleep,
        mapping=aes(x=vore, y=bodywt))+
   geom_boxplot(mapping=aes(fill=vore))+
-  scale_y_log10()
+  scale_y_log10()+
   labs(title="The Range of Body Weight by Vore Type", x="Vore Type", y= "Body Weight")
 ```
 
@@ -80,7 +82,7 @@ ggplot(data=msleep,
        mapping=aes(x=bodywt, y=sleep_total))+
   geom_point()+
   scale_x_log10()+
-  labs(title="Body Weight vs Sleep Time", x="Body Weight", y= "Sleep Time")
+  labs(title="Body Weight vs Total Sleep Time", x="Body Weight", y= "Total Sleep Time")
 ```
 
 
@@ -101,15 +103,22 @@ ggplot(data=msleep,
        mapping=aes(x=brainwt, y=bodywt))+
   geom_point()+
   scale_x_log10()+
-  scale_y_log10()
+  scale_y_log10()+
 labs(title= "Brain Weight vs Body Weight", x= "Brain Weight", y= "Body Weight")
 ```
 
 
 **10. Build one plot of your choice that provides additional insight into the msleep dataset. Be sure to include appropriate labels and a title.**
 
-```{r}
+#The Relationship Between Brain Weight and The Amount of Sleep Spent in REM
 
+```{r}
+ggplot(data=msleep,
+       mapping=aes(x=brainwt, y=sleep_rem))+
+  geom_point(mapping=aes())+
+    labs(title = "Brain Weight vs Amount of REM Sleep", x= "Brain Weight", y="Amount of REM Sleep")+
+      scale_y_log10()+
+      scale_x_log10()
 ```
 
 

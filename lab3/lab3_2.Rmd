@@ -129,9 +129,9 @@ nrow(fish)
 `ncol` gives the number of columns.
 ```{r}
 ncol(fish)
-dim()` gives the dimensions.
 ```
 
+dim()` gives the dimensions.
 ```{r}
 dim(fish)
 ```

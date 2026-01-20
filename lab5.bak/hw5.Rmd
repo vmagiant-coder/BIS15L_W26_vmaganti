@@ -26,7 +26,7 @@ Data: http://datadryad.org/resource/doi:10.5061/dryad.q5j65/1
 getwd()
 ```
 ```{r}
-homerange <- read_csv("/Users/vmaganti/Desktop/BIS15L_W26_vmaganti-main-2/lab5/data/Tamburelloetal_HomeRangeDatabase.csv")
+homerange <- read_csv("/Users/magantiv/Desktop/clone_repository_github/BIS15L_W26_vmaganti/lab5.bak/data/Tamburelloetal_HomeRangeDatabase.csv")
 ```
 
 
@@ -50,7 +50,7 @@ ggplot(data=homerange,
 **4. Are there more carnivores or herbivores represented in the data? Make a plot that shows the number in each trophic guild.**
 ```{r}
 homerange %>% 
-  filter(trophic.guild = "carnivore" | trophic.guild = "herbivore") %>% 
+  filter(trophic.guild == "carnivore" | trophic.guild == "herbivore") %>%
 ggplot(data = homerange,
        mapping=aes(x=trophic.guild)) +
   geom_bar(mapping=aes(fill=trophic.guild))+
@@ -73,31 +73,63 @@ homerange %>%
 
 **6. Which two species have the largest and smallest homerange sizes?**
 ```{r}
-
+homerange %>%
+  select(species, preymass) %>%
+ slice_max(preymass, n=2)
 ```
 
 ```{r}
-
+homerange %>%
+  select(species, preymass) %>%
+ slice_min(preymass, n=2)
 ```
 
 **7. Which carnivorous mammals have the largest homeranges?**
 ```{r}
-
+homerange %>%
+  filter(trophic.guild == "carnivore") %>%
+arrange(desc(trophic.guild))
 ```
 
 **8. Is there a relationship between body mass and homerange size? Make a scatterplot to show this relationship. Be sure to include appropriate labels and a title.**
 ```{r}
-
+names(homerange)
 ```
 
+
+```{r}
+ggplot(data = homerange,
+       mapping=aes(x=mean.mass.g, y=mean.hra.m2)) +
+  geom_point() +
+labs(title="Relationship between Body Mass and Homerange Size", x= "Body Mass", y= "Homerange Size") +
+scale_y_log10() +
+scale_x_log10()
+```
+fish %>%
+  select(lakeid, radii_length_mm) %>%
+filter(lakeid=="AL" | lakeid=="AR") %>%
+  filter(between(radii_length_mm, 2,4)) %>%
+  arrange(desc(radii_length_mm))
+  
 **9. Use filter to extract the data for only birds and mammals. Then make a plot that compares the homerange sizes of these two groups. Be sure to include appropriate labels and a title.**
 ```{r}
-
+homerange %>%
+  select(taxon, mean.hra.m2) %>%
+filter(taxon %in% c("birds", "mammals")) %>%
+  ggplot(mapping=aes(x=taxon, y = mean.hra.m2)) +
+  geom_boxplot(mapping=aes(fill=taxon)) +
+  scale_y_log10() +
+  labs(title= "Birds vs. Mammal Homerange Sizes", x = "Taxon", y="Homerange Size")
 ```
 
 **10. Do one additional exploratory analysis of your choice. Before writing the code, write the question you are trying to answer. The question should be biologically meaningful and appropriate for the data. It must include at least one `filter()`, `select()`, and `arrange()`.**
-```{r}
 
+Which species that walk or fly have the largest home ranges?
+```{r}
+homerange %>%
+  filter(locomotion=="walking" | locomotion=="flying") %>%
+  select(species, locomotion, mean.hra.m2) %>%
+  arrange(desc(mean.hra.m2))
 ```
 
 ## Knit and Upload

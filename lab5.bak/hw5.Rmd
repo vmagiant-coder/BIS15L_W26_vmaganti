@@ -33,11 +33,14 @@ homerange <- read_csv("/Users/magantiv/Desktop/clone_repository_github/BIS15L_W2
 **2. What is the structure of the `homerange` data? Does it have any NA's? Do a quick exploratory analysis of your choice below.**
 ```{r}
 glimpse(homerange)
+names(homerange)
 ```
 
 ```{r}
-names(homerange)
+sum(is.na(homerange))
+filter(homerange, thermoregulation == "ectotherm")
 ```
+There are 2945 NA values.
 
 **3. Which animal groups are represented in the data? Make a plot that shows the number in each class.**
 ```{r}
@@ -66,8 +69,8 @@ names(homerange)
 homerange %>% 
   filter(mean.hra.m2> 1000000)  %>%
   select(common.name, order, mean.hra.m2, mean.mass.g)  %>%
-  arrange(desc(mean.hra.m2))
-  
+  arrange(desc(mean.hra.m2)) %>%
+  slice_head(n=10)
 ```
 
 
@@ -101,7 +104,7 @@ names(homerange)
 ggplot(data = homerange,
        mapping=aes(x=mean.mass.g, y=mean.hra.m2)) +
   geom_point() +
-labs(title="Relationship between Body Mass and Homerange Size", x= "Body Mass", y= "Homerange Size") +
+labs(title="Body Mass vs. Homerange Size", x= "Body Mass", y= "Homerange Size") +
 scale_y_log10() +
 scale_x_log10()
 ```
@@ -124,7 +127,7 @@ filter(taxon %in% c("birds", "mammals")) %>%
 
 **10. Do one additional exploratory analysis of your choice. Before writing the code, write the question you are trying to answer. The question should be biologically meaningful and appropriate for the data. It must include at least one `filter()`, `select()`, and `arrange()`.**
 
-Which species that walk or fly have the largest home ranges?
+Which species that walk or fly have the largest homeranges?
 ```{r}
 homerange %>%
   filter(locomotion=="walking" | locomotion=="flying") %>%

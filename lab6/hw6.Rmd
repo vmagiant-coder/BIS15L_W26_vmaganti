@@ -13,6 +13,7 @@ Answer the following questions and/or complete the exercises in RMarkdown. Pleas
 ## Load the tidyverse
 ```{r message=FALSE, warning=FALSE}
 library("tidyverse")
+install.packages("janitor")
 library("janitor")
 ```
 
@@ -57,6 +58,8 @@ new_gabon <- gabon %>%
 **5. Make a plot that shows the number of transects for each land use type.**
 ```{r}
 #select id and land use and logging and see how many times it shows up -> bar graph
+new_gabon %>%
+  select(transect_id, )
 ```
 
 ```{r}

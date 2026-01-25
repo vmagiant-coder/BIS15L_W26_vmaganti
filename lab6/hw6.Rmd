@@ -116,7 +116,8 @@ names(new_gabon)
 
 ```{r}
 new_gabon %>%
-  #filter(veg_rich > 15 | )
+  select(transect_id, land_use, veg_rich, veg_dbh) %>%
+  filter(veg_rich > 15 | (veg_dbh >50 & veg_dbh <=60))
 ```
 
 **10.Which transects and land use types have more than 10 tree species and 10 mammal species? Use `arrange()` to sort by the number of tree species.**

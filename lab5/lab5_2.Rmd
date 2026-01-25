@@ -81,7 +81,7 @@ getwd()
 ```
 
 ```{r}
-fish <- read.csv("/Users/vmaganti/Desktop/BIS15L_W26_vmaganti-main-2/lab5/data/Gaeta_etal_CLC_data.csv")
+fish <- read.csv("/Users/magantiv/Desktop/clone_repository_github/BIS15L_W26_vmaganti/lab5/data/Gaeta_etal_CLC_data.csv")
 names(fish)
 ```
 

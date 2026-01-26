@@ -13,7 +13,6 @@ Answer the following questions and/or complete the exercises in RMarkdown. Pleas
 ## Load the tidyverse
 ```{r message=FALSE, warning=FALSE}
 library("tidyverse")
-install.packages("janitor")
 library("janitor")
 ```
 
@@ -87,7 +86,7 @@ new_gabon %>%
   geom_boxplot(aes(fill=land_use)) +
   labs(title = "All Species Diversity Across Varying Land Types", x="Land Use Type", y="All Species Diversity")
 ```
-
+National Parks have the greatest average.
 ```{r}
 
 ```
@@ -125,7 +124,7 @@ new_gabon %>%
 new_gabon %>%
   filter(veg_rich > 10, rich_mammal_species > 10) %>%
   select(transect_id, land_use, rich_mammal_species, veg_rich) %>%
-  arrange(desc(veg_rich))
+  arrange(veg_rich)
 ```
 
 ## Knit and Upload

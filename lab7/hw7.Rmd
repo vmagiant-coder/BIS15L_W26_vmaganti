@@ -1,6 +1,6 @@
 ---
 title: "Homework 7"
-author: "Your Name Here"
+author: "Vaishnavi Maganti"
 date: "`r Sys.Date()`"
 output:
   html_document: 
@@ -22,67 +22,100 @@ For this assignment, we will use data from a study on elephants and the effects 
 Reference: [Chiyo, Patrick I., Vincent Obanda, and David K. Korir. “Illegal tusk harvest and the decline of tusk size in the African elephant.” Ecology and Evolution 5, 22: 5216–5229 (2015)](https://doi.org/10.1002/ece3.1769). Data deposited at [Dryad Digital Repository](https://doi.org/10.5061/dryad.h6t7j).  
 
 **1. Before starting data analysis, read the abstract of the paper to get an idea of the questions being asked. In 2-3 sentences, describe what the study is testing and the variables involved.**  
-\
-\
-\
-\
-\
+
+The study is testing the effects of African elephant tusk harvesting on tusk size and evolution. The variables involved are tusk length, size, and circumference along with tusk evolution. The study is also testing whether or not the poaching of larger tusks from the African elephants was a driver of smaller tusk evolution in future generations and whether or not the trait was heritable.
 
 **2. Load `elephants.csv` and store it as a new object called `elephants`.**  
-\
-\
-\
-\
-\
+
+```{r}
+getwd()
+```
+
+```{r}
+elephants <- read_csv("/Users/vmaganti/Desktop/BIS15L_W26_vmaganti/lab7/data/elephants.csv")
+```
+
 
 **3. Clean the data by converting variable names to lowercase with no spaces or special characters.**  
-\
-\
-\
-\
-\
+
+```{r}
+elephants <- elephants %>%
+  clean_names()
+```
+
 
 **4. Use one or more of the summary functions you have learned to get an idea of the structure of the data.**   
-\
-\
-\
-\
-\
+
+```{r}
+glimpse(elephants)
+```
+```{r}
+names(elephants)
+```
+
+```{r}
+summary(elephants)
+```
+
 
 **5. Use `mutate()` Change the variables `years_of_sample_collection`, `elephant_id`, and `sex` to factors. Be sure to store the output as a new dataframe and use it for the remaining questions.**  
-\
-\
-\
-\
-\
+
+```{r}
+elephants <- elephants %>%
+  mutate(across(c(years_of_sample_collection, elephant_id, sex), as.factor))
+```
+
 
 **6. From which years were data collected? Show the sample periods below.**  
-\
-\
-\
-\
-\
+
+```{r}
+elephants %>%
+  select(years_of_sample_collection) %>%
+  distinct(years_of_sample_collection)
+```
+
 
 **7. How many males and females were sampled in this study?**  
-\
-\
-\
-\
-\
+
+```{r}
+elephants %>%
+  select(sex) %>%
+  filter(sex=="m" | sex== "f") %>%
+count(sex)  
+```
+
+
 
 **8. What is the mean, median, and standard deviation for age of males and females included in the study? Separate the results by year of sample collection. Does the sampling look even between years and sexes?**  
-\
-\
-\
-\
-\
+
+```{r}
+elephants %>%
+  select(sex, estimated_age_years, years_of_sample_collection) %>%
+  filter(sex=="m") %>%
+  summarize(sex, years_of_sample_collection,
+            mean_age_m=mean(estimated_age_years, na.rm = T),
+            median_age_m=median(estimated_age_years, na.rm = T),
+            sd_age_m=sd(estimated_age_years, na.rm = T)) %>%
+  distinct()
+```
+```{r}
+elephants %>%
+  select(sex, estimated_age_years, years_of_sample_collection) %>%
+  filter(sex=="f") %>%
+  summarize(sex, years_of_sample_collection,
+            mean_age_f=mean(estimated_age_years, na.rm = T),
+            median_age_f=median(estimated_age_years, na.rm = T),
+            sd_age_f=sd(estimated_age_years, na.rm = T)) %>%
+  distinct()
+```
+
 
 **9. Is age (independent variable) a positive predictor of tusk length (dependent variable)? Create a plot that shows the relationship between these variables and add a linear model fit line.**  
-\
-\
-\
-\
-\
+
+```{r}
+
+```
+
 
 **10. Is shoulder height (independent variable) a positive predictor of tusk length (dependent variable)? Create a plot that shows the relationship between these variables and add a linear model fit line.**  
 \

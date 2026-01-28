@@ -1,13 +1,4 @@
-# BIS 015L — **EXHAUSTIVE** RStudio Command Guide with Examples (Labs + Homeworks)
-
-This document includes **EVERY command, helper, operator, and variation** that appears in **Labs 1–7 and Homeworks 2–7**.
-
-For **EVERY item**, you get:
-  • what it does
-• a **lab/homework-style question**
-  • **working example code**
-  
-  Nothing is skipped — even small operators and helpers.
+# BIS 015L — Study Guide
 
 ---
   
@@ -560,5 +551,3 @@ select(df, where(is.numeric))
 ```
 
 ---
-  
-  END OF **FULLY EXHAUSTIVE** COMMAND GUIDE

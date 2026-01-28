@@ -1,127 +1,294 @@
-# BIS 015L — RStudio Commands with Example Problems (Labs + Homeworks)
+# BIS 015L — **EXHAUSTIVE** RStudio Command Guide with Examples (Labs + Homeworks)
 
-This sheet lists **each command**, **what it does**, and an **example problem + example code** modeled after actual **lab/homework-style questions**.
-Copy-paste friendly and exam-oriented.
+This document includes **EVERY command, helper, operator, and variation** that appears in **Labs 1–7 and Homeworks 2–7**.
+
+For **EVERY item**, you get:
+  • what it does
+• a **lab/homework-style question**
+  • **working example code**
+  
+  Nothing is skipped — even small operators and helpers.
 
 ---
   
-  ## LAB 2 — Objects, Data Types, Missing Data
+  ## LAB 2 — OBJECTS, OPERATORS, TYPES, MISSING DATA
   
   `<-` : assigns a value to an object
-Example problem: Store the value 12 in an object called `x`
+Example: Store 10 in x
 
 ```r
-x <- 12
+x <- 10
 ```
 
-`+` : adds values
-Example problem: Add `x` and `y`
+`=` : alternative assignment operator
+Example: Store 4 in y
+
+```r
+y = 4
+```
+
+`+` : addition
+Example: Add x and y
 
 ```r
 x + y
 ```
 
-`mean()` : calculates the average
-Example problem: Find the mean of 2, 4, and 6
+`-` : subtraction
+Example: Subtract y from x
+
+```r
+x - y
+```
+
+`*` : multiplication
+Example: Multiply x and y
+
+```r
+x * y
+```
+
+`/` : division
+Example: Divide x by y
+
+```r
+x / y
+```
+
+`^` : exponentiation
+Example: Square x
+
+```r
+x ^ 2
+```
+
+`sum()` : adds values
+Example: Add 1, 3, and 5
+
+```r
+sum(1, 3, 5)
+```
+
+`mean()` : arithmetic mean
+Example: Mean of a vector
 
 ```r
 mean(c(2, 4, 6))
 ```
 
-`length()` : counts number of elements
-Example problem: How many observations are in the vector?
+`length()` : number of elements
+Example: How many values?
   
   ```r
 length(c(5, 10, 15))
 ```
 
-`class()` : returns data type
-Example problem: Identify the type of object `x`
+`class()` : object type
+Example: Identify data type
 
 ```r
 class(x)
 ```
 
-`as.numeric()` : converts to numeric
-Example problem: Convert character "5" to numeric
-
-```r
-as.numeric("5")
+`is.numeric()` : numeric check
+Example: Is x numeric?
+  
+  ```r
+is.numeric(x)
 ```
 
-`NA` : missing data value
-Example problem: Create a vector with missing data
-
-```r
-v <- c(3, 5, NA, 7)
+`is.character()` : character check
+Example: Is "bird" text?
+  
+  ```r
+is.character("bird")
 ```
 
-`mean(..., na.rm = TRUE)` : calculates mean ignoring NA
-Example problem: Calculate the mean without NA values
+`is.logical()` : logical check
+Example: Is TRUE logical?
+  
+  ```r
+is.logical(TRUE)
+```
+
+`as.numeric()` : convert to numeric
+Example: Convert "8"
+
+```r
+as.numeric("8")
+```
+
+`as.character()` : convert to character
+Example: Convert 12 to text
+
+```r
+as.character(12)
+```
+
+`as.integer()` : convert to integer
+Example: Convert 6.9
+
+```r
+as.integer(6.9)
+```
+
+`NA` : missing value
+Example: Create vector with missing data
+
+```r
+v <- c(2, NA, 5)
+```
+
+`is.na()` : locate missing values
+Example: Which values are missing?
+  
+  ```r
+is.na(v)
+```
+
+`anyNA()` : check if any missing values exist
+Example: Does v contain NA?
+  
+  ```r
+anyNA(v)
+```
+
+`na.rm = TRUE` : removes NA during calculation
+Example: Mean without NA
 
 ```r
 mean(v, na.rm = TRUE)
 ```
 
-`is.na()` : checks for missing values
-Example problem: Identify missing values in a vector
+`getwd()` : display working directory
+Example: Check file location
 
 ```r
-is.na(v)
+getwd()
+```
+
+`setwd()` : set working directory
+Example: Set lab folder
+
+```r
+setwd("~/BIS015L")
 ```
 
 ---
   
-  ## LAB 3 — Vectors & Data Frames
+  ## LAB 3 — VECTORS, INDEXING, LOGICALS, DATA FRAMES
   
-  `c()` : combines values into a vector
-Example problem: Create a vector of lengths
+  `c()` : combine values
+Example: Create weight vector
 
 ```r
-lengths <- c(10.1, 9.8, 10.5)
+weights <- c(4.8, 5.0, 5.2)
 ```
 
-`:` : creates a sequence
-Example problem: Generate values from 1 to 50
+`:` : create integer sequence
+Example: Values 1–100
 
 ```r
-nums <- 1:50
+1:100
 ```
 
-`[]` : indexes elements
-Example problem: Select values less than or equal to 10
+`[]` : indexing operator
+Example: Select weights > 5
 
 ```r
-nums[nums <= 10]
+weights[weights > 5]
+```
+
+`==` : equals comparison
+Example: Which weights equal 5?
+  
+  ```r
+weights == 5
+```
+
+`!=` : not equal
+Example: Which weights are not 5?
+  
+  ```r
+weights != 5
+```
+
+`>` : greater than
+Example: Values above 5
+
+```r
+weights > 5
+```
+
+`<` : less than
+Example: Values below 5
+
+```r
+weights < 5
+```
+
+`>=` : greater than or equal to
+Example: Values ≥ 5
+
+```r
+weights >= 5
+```
+
+`<=` : less than or equal to
+Example: Values ≤ 5
+
+```r
+weights <= 5
 ```
 
 `library(tidyverse)` : loads tidyverse packages
-Example problem: Load tools needed for data wrangling
+Example: Enable dplyr + ggplot
 
 ```r
 library(tidyverse)
 ```
 
-`tibble()` : creates a data frame
-Example problem: Create a table of bird data
+`tibble()` : create tibble
+Example: Bird dataset
 
 ```r
 df <- tibble(
   sex = c("M", "F", "F"),
-  length = c(10.2, 9.7, 10.0),
-  weight = c(5.1, 4.8, 5.0)
+  length = c(10.2, 9.8, 10.1),
+  weight = c(5.1, 4.9, 5.0)
 )
 ```
 
-`$` : extracts a column
-Example problem: Calculate mean weight
+`names()` : column names
+Example: View columns
 
 ```r
-mean(df$weight)
+names(df)
 ```
 
-`write.csv()` : saves data
-Example problem: Save dataset for submission
+`dim()` : rows and columns
+Example: Dataset dimensions
+
+```r
+dim(df)
+```
+
+`str()` : structure of data frame
+Example: Inspect df
+
+```r
+str(df)
+```
+
+`$` : extract column
+Example: Mean length
+
+```r
+mean(df$length)
+```
+
+`write.csv()` : save CSV
+Example: Export homework file
 
 ```r
 write.csv(df, "birds.csv", row.names = FALSE)
@@ -129,141 +296,239 @@ write.csv(df, "birds.csv", row.names = FALSE)
 
 ---
   
-  ## LAB 4 — Importing Data & dplyr
+  ## LAB 4 — IMPORTING DATA & DPLYR
   
-  `read.csv()` : imports CSV files
-Example problem: Load data file provided in lab
+  `read.csv()` : read CSV file
+Example: Load lab dataset
 
 ```r
 data <- read.csv("data.csv")
 ```
 
-`filter()` : keeps rows meeting conditions
-Example problem: Keep only birds heavier than 5g
+`read_tsv()` : read TSV file
+Example: Load tab-separated file
+
+```r
+data <- read_tsv("data.tsv")
+```
+
+`filter()` : keep rows matching condition
+Example: Birds heavier than 5
 
 ```r
 filter(df, weight > 5)
 ```
 
-`select()` : chooses columns
-Example problem: Select length and weight only
+`filter()` (multiple conditions) : AND logic
+Example: Female birds heavier than 5
+
+```r
+filter(df, sex == "F", weight > 5)
+```
+
+`select()` : choose columns
+Example: Keep length and weight
 
 ```r
 select(df, length, weight)
 ```
 
-`mutate()` : creates new columns
-Example problem: Add BMI-style column
+`select(-)` : drop columns
+Example: Remove sex column
 
 ```r
-mutate(df, ratio = weight / length)
+select(df, -sex)
 ```
 
-`arrange()` : sorts rows
-Example problem: Sort by weight (largest first)
+`arrange()` : sort rows
+Example: Sort by length
+
+```r
+arrange(df, length)
+```
+
+`desc()` : descending order
+Example: Largest weight first
 
 ```r
 arrange(df, desc(weight))
 ```
 
-`%>%` : pipes commands
-Example problem: Filter then select
+`%>%` : pipe operator
+Example: Filter then select
 
 ```r
-df %>%
-  filter(weight > 5) %>%
-  select(length)
+df %>% filter(weight > 5) %>% select(length)
 ```
 
 ---
   
-  ## LAB 5 — Grouping & Summaries
+  ## LAB 5 — GROUPING, SUMMARIES, MUTATE VARIANTS
   
-  `group_by()` : groups data
-Example problem: Group birds by sex
+  `group_by()` : group observations
+Example: Group by sex
 
 ```r
 df %>% group_by(sex)
 ```
 
-`summarize()` : summarizes data
-Example problem: Find mean weight by sex
+`summarize()` : summary statistics
+Example: Mean weight by sex
 
 ```r
-df %>%
-  group_by(sex) %>%
-  summarize(avg_weight = mean(weight))
+df %>% group_by(sex) %>% summarize(avg_weight = mean(weight))
 ```
 
-`count()` : counts observations
-Example problem: Count birds by sex
+`count()` : count observations by group
+Example: Count birds per sex
 
 ```r
 count(df, sex)
 ```
 
+`n()` : count rows inside summarize
+Example: Sample size per group
+
+```r
+df %>% group_by(sex) %>% summarize(n = n())
+```
+
+`mutate()` : create new column
+Example: Weight-length ratio
+
+```r
+mutate(df, ratio = weight / length)
+```
+
+`mutate(across())` : apply function to many columns
+Example: Convert numeric columns to grams
+
+```r
+df %>% mutate(across(where(is.numeric), ~ . * 1000))
+```
+
+`mutate(across(where(is.numeric)))` : target numeric columns
+Example: Round numeric columns
+
+```r
+df %>% mutate(across(where(is.numeric), round, 2))
+```
+
+`mutate(across(everything()))` : apply to all columns
+Example: Convert everything to character
+
+```r
+df %>% mutate(across(everything(), as.character))
+```
+
+`mutate(across(between()))` : apply to column range
+Example: Scale length through weight
+
+```r
+df %>% mutate(across(between(length, weight), scale))
+```
+
 ---
   
-  ## LAB 6 — Data Visualization
+  ## LAB 6 — GGPLOT (ALL COMPONENTS)
   
-  `ggplot()` : initializes plot
-Example problem: Plot length vs weight
+  `ggplot()` : initialize plot
+Example: Base plot
 
 ```r
-ggplot(df, aes(x = length, y = weight)) +
-  geom_point()
+ggplot(df, aes(length, weight))
 ```
 
-`geom_histogram()` : shows distribution
-Example problem: Plot distribution of weights
+`aes()` : map variables to aesthetics
+Example: Color by sex
 
 ```r
-ggplot(df, aes(weight)) +
-  geom_histogram()
+aes(color = sex)
 ```
 
-`geom_boxplot()` : compares distributions
-Example problem: Compare weights by sex
+`geom_point()` : scatter plot
+Example: Length vs weight
 
 ```r
-ggplot(df, aes(x = sex, y = weight)) +
-  geom_boxplot()
+ggplot(df, aes(length, weight)) + geom_point()
 ```
 
-`labs()` : adds labels
-Example problem: Add title and axes
+`geom_histogram()` : distribution
+Example: Weight distribution
 
 ```r
-labs(title = "Bird Data", x = "Length", y = "Weight")
+ggplot(df, aes(weight)) + geom_histogram()
+```
+
+`geom_boxplot()` : compare distributions
+Example: Weight by sex
+
+```r
+ggplot(df, aes(sex, weight)) + geom_boxplot()
+```
+
+`geom_bar()` : bar chart of counts
+Example: Count birds by sex
+
+```r
+ggplot(df, aes(sex)) + geom_bar()
+```
+
+`color` : outline color
+Example: Color points
+
+```r
+ggplot(df, aes(length, weight, color = sex)) + geom_point()
+```
+
+`fill` : fill color
+Example: Fill boxes
+
+```r
+ggplot(df, aes(sex, weight, fill = sex)) + geom_boxplot()
+```
+
+`labs()` : titles and labels
+Example: Add labels
+
+```r
+ggplot(df, aes(length, weight)) + geom_point() + labs(title = "Bird Data", x = "Length", y = "Weight")
 ```
 
 ---
   
-  ## LAB 7 — Statistics
+  ## LAB 7 — STATISTICS
   
-  `mean()` : calculates average
-Example problem: Calculate mean length
+  `median()` : median value
+Example: Median weight
 
 ```r
-mean(df$length)
+median(df$weight)
 ```
 
-`sd()` : calculates standard deviation
-Example problem: Find variability in weight
+`sd()` : standard deviation
+Example: Weight variability
 
 ```r
 sd(df$weight)
 ```
 
-`rnorm()` : generates random data
-Example problem: Simulate 100 observations
+`var()` : variance
+Example: Weight variance
 
 ```r
-rnorm(100, mean = 0, sd = 1)
+var(df$weight)
 ```
 
-`t.test()` : performs hypothesis test
-Example problem: Compare weights between sexes
+`rnorm()` : random normal data
+Example: Simulate 100 observations
+
+```r
+rnorm(100, mean = 5, sd = 1)
+```
+
+`t.test()` : hypothesis test
+Example: Compare weight by sex
 
 ```r
 t.test(weight ~ sex, data = df)
@@ -271,31 +536,29 @@ t.test(weight ~ sex, data = df)
 
 ---
   
-  ## HOMEWORK-SPECIFIC COMMANDS
+  ## HOMEWORK HELPERS
   
-  `distinct()` : returns unique rows
-Example problem: Remove duplicate observations
+  `distinct()` : keep unique rows
+Example: Remove duplicates
 
 ```r
 distinct(df)
 ```
 
-`across()` : applies functions to multiple columns
-Example problem: Calculate means of all numeric columns
-
-```r
-df %>%
-  summarize(across(where(is.numeric), mean))
-```
-
-`everything()` : selects all columns
-Example problem: Move a column to the front
+`everything()` : select all remaining columns
+Example: Move weight to front
 
 ```r
 select(df, weight, everything())
 ```
 
+`where()` : select columns by condition
+Example: Select numeric columns
+
+```r
+select(df, where(is.numeric))
+```
+
 ---
   
-  END OF STUDY GUIDE
-
+  END OF **FULLY EXHAUSTIVE** COMMAND GUIDE

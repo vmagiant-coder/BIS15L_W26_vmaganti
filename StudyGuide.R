@@ -551,3 +551,324 @@ select(df, where(is.numeric))
 ```
 
 ---
+  
+  
+  ## `mutate()`, `distinct()`, `summarize()`
+  
+  ---
+  
+  
+  These are **core `dplyr` verbs** used for data wrangling in R (via `tidyverse`).
+
+* `mutate()` → **add or modify columns** (row-wise)
+* `distinct()` → **remove duplicates**
+  * `summarize()` → **collapse data into statistics**
+  
+almost always see them used with the pipe `%>%`.
+
+---
+  
+  ##  `mutate()` — *Create or change columns*
+  
+  ### What it does
+  
+  * Adds **new variables (columns)**
+  * Or **modifies existing columns**
+  * **Does NOT change the number of rows**
+  
+  ---
+  
+  ### Basic structure
+  
+  ```r
+mutate(data, new_column = calculation)
+```
+
+---
+  
+  ### Example: Create a new column
+  
+  ```r
+students %>%
+  mutate(avg_score = (exam1 + exam2) / 2)
+```
+
+What happens:
+  
+  * R looks **row by row**
+  * Calculates the average for each row
+* Adds `avg_score` as a new column
+
+ Rows stay the same
+
+---
+  
+  ### Example: Modify an existing column
+  
+  ```r
+students %>%
+  mutate(exam1 = exam1 + 5)
+```
+
+ Overwrites `exam1`
+
+---
+  
+  ### Example: Conditional logic
+  
+  ```r
+students %>%
+  mutate(pass = if_else(exam1 >= 75, "Pass", "Fail"))
+```
+
+ Creates a new column based on a condition
+
+---
+  
+  ### Example: Multiple columns at once
+  
+  ```r
+students %>%
+  mutate(
+    total = exam1 + exam2,
+    avg = total / 2
+  )
+```
+
+---
+  
+  ### `mutate()` key takeaways
+  
+  *  Changes columns
+*  Row-wise operations
+*  Does NOT summarize
+*  Does NOT remove rows
+
+---
+  
+  ## `distinct()` — *Remove duplicate rows*
+  
+  ### What it does
+  
+  * Keeps **unique rows**
+  * Removes **duplicate rows**
+  
+  ---
+  
+  ### Basic structure
+  
+  ```r
+distinct(data, column_name)
+```
+
+---
+  
+  ### Example: Unique values in one column
+  
+  ```r
+animals %>%
+  distinct(species)
+```
+
+ One row per species
+ Duplicate species removed
+
+---
+  
+  ### Example: Unique combinations
+  
+  ```r
+animals %>%
+  distinct(species, location)
+```
+
+ Uniqueness depends on **both columns together**
+  
+  ---
+  
+  ### Example: Remove exact duplicate rows
+  
+  ```r
+animals %>%
+  distinct()
+```
+
+ Removes rows that are completely identical
+
+---
+  
+  ### Example: Keep all columns
+  
+  ```r
+animals %>%
+  distinct(species, .keep_all = TRUE)
+```
+
+ One row per species
+ Keeps other columns
+
+---
+  
+  ### What “unique” means
+  
+  * Unique = **not duplicated**
+  * Does NOT mean it appeared only once originally
+* Means only one copy is kept
+
+---
+  
+  ### `distinct()` key takeaways
+  
+  *  Removes duplicate rows
+*  No math
+*  No statistics
+*  Used for cleaning data
+
+---
+  
+  ## 3️⃣ `summarize()` — *Collapse data*
+  
+  ### What it does
+  
+  * Turns **many rows into fewer rows**
+  * Computes **summary statistics**
+  
+  
+  ---
+  
+  ### Basic structure
+  
+  ```r
+summarize(data, new_column = summary_function())
+```
+
+---
+  
+  ### Example: One summary for all data
+  
+  ```r
+students %>%
+  summarize(mean_exam1 = mean(exam1))
+```
+
+✔ Output has **1 row**
+  
+  ---
+  
+  ### Example: Multiple summaries
+  
+  ```r
+students %>%
+  summarize(
+    mean_exam1 = mean(exam1),
+    max_exam2 = max(exam2),
+    n = n()
+  )
+```
+
+---
+  
+  ### `group_by()` + `summarize()` 
+  
+  ```r
+students %>%
+  group_by(name) %>%
+  summarize(avg_exam1 = mean(exam1))
+```
+
+ Groups first
+ Summarizes within each group
+ One row per group
+
+---
+  
+  ### Realistic example
+  
+  ```r
+gabon %>%
+  group_by(hunt_cat) %>%
+  summarize(
+    mean_distance = mean(distance),
+    sd_distance = sd(distance),
+    n = n()
+  )
+```
+
+ One row per `hunt_cat`
+
+---
+  
+  ### Common summary functions
+  
+  * `mean()`
+* `median()`
+* `sd()`
+* `min()`, `max()`
+* `sum()`
+* `n()` (row count)
+
+---
+  
+  ### `summarize()` key takeaways
+  
+  *  Reduces rows
+*  Produces statistics
+*  Usually paired with `group_by()`
+*  Not for raw data
+
+---
+  
+  ## Comparison Table
+  
+  | Function      | Changes rows? | Changes columns? | Purpose              |
+  | ------------- | ------------- | ---------------- | -------------------- |
+  | `mutate()`    |  No          |  Yes            | Add / modify columns |
+  | `distinct()`  |  Yes         |  No             | Remove duplicates    |
+  | `summarize()` |  Yes         |  Yes            | Compute statistics   |
+  
+  ---
+  
+  
+  * `mutate()` → **row-wise math**
+  * `distinct()` → **clean duplicates**
+  * `summarize()` → **collapse to stats**
+  
+  ---
+  
+  * “Create a new variable” → `mutate()`
+* “Get unique IDs / species / transects” → `distinct()`
+* “Calculate mean / count / summary by group” → `group_by()` + `summarize()`
+
+---
+  summarize_all():
+ex. 
+  students %>%
+  group_by(class) %>%
+  summarize_all(mean)
+One row per group, Mean of each numeric column within each group
+
+also
+
+students %>%
+  summarize(across(everything(), mean))
+
+
+Converting -999 to NA values
+1) Replaces all -999 values with NA
+data_clean <- data %>%
+  mutate(across(everything(), ~ na_if(., -999)))
+
+2) Remove NA values in summaries
+data_clean %>%
+  summarize(mean_value = mean(distance, na.rm = TRUE))
+
+3) With grouping:
+  data_clean %>%
+  group_by(hunt_cat) %>%
+  summarize(mean_distance = mean(distance, na.rm = TRUE))
+
+4) Example problem:
+  gabon %>%
+  mutate(distance = na_if(distance, -999)) %>%
+  group_by(hunt_cat) %>%
+  summarize(mean_distance = mean(distance, na.rm = TRUE))

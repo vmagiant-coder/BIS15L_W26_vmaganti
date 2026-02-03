@@ -30,13 +30,14 @@ fisheries_clean <- read_csv("data/fisheries_clean.csv")
 1. Explore the data. What are the names of the variables, what are the dimensions, are there any NA's, what are the classes of the variables, etc.? You may use the functions that you prefer.
 ```{r}
 names(fisheries_clean)
+dim(fisheries_clean)
+glimpse(fisheries_clean)
 ```
 
 2. Convert the following variables to factors: `period`, `continent`, `geo_region`, `country`, `scientific_name`, `common_name`, `taxonomic_code`, and `status`.
 ```{r}
 fisheries_clean <- fisheries_clean %>%
   mutate(across(c(period, continent, geo_region, country, scientific_name, common_name, taxonomic_code, status), as.factor))
-         
 ```
 
 3. Are there any missing values in the data? If so, which variables contain missing values and how many are missing for each variable?
@@ -46,16 +47,20 @@ fisheries_clean <- fisheries_clean %>%
 
 4. How many countries are represented in the data?
 ```{r}
-
+fisheries_clean %>%
+  distinct(country) %>%
+nrow()
 ```
 
 5. The variables `common_name` and `taxonomic_code` both refer to species. How many unique species are represented in the data based on each of these variables? Are the numbers the same or different?
 ```{r}
 fisheries_clean %>%
   group_by(common_name, taxonomic_code) %>%
-  distinct() %>%
+  distinct(common_name) %>%
   count()
 ```
+
+The numbers are different.
 
 6. In 2023, what were the top five countries that had the highest overall catch?
 ```{r}
@@ -68,6 +73,9 @@ fisheries_clean %>%
    slice_head(n=5)
 ```
 
+  China, Indonesia, India, the Russian Federation, and the USA were the top 5 countries with the highest overall catch.
+
+
 7. In 2023, what were the top 10 most caught species? To keep things simple, assume `common_name` is sufficient to identify species. What does `NEI` stand for in some of the common names? How might this be concerning from a fisheries management perspective?
 ```{r}
 fisheries_clean %>%
@@ -79,6 +87,9 @@ fisheries_clean %>%
    slice_head(n=10)
 ```
 
+  NEI stands for "Not Elsewhere Identified", and in fisheries data this means that the catch could not be assigned or identified to a particular species, and it is grouped under a broader taxonomic category. This is concerning from a fisheries management perspective because it overshadows which species are actually being harvested, increasing the risk of overfishing for vulnerable fish species.
+
+
 8. For the species that was caught the most above (not NEI), which country had the highest catch in 2023?
 ```{r}
 fisheries_clean %>%
@@ -89,6 +100,7 @@ fisheries_clean %>%
   arrange(desc(catch)) %>%
    slice_head(n=1)
 ```
+The Russian Federation had the highest catch in 2023.
 
 9. How has fishing of this species changed over the last decade (2013-2023)? Create a  plot showing total catch by year for this species.
 ```{r}
@@ -97,12 +109,22 @@ fisheries_clean %>%
 filter(period == 2013 | period == 2014 | period == 2015 | period == 2016 | period == 2017 | period == 2018 | period == 2019 | period == 2020 | period == 2021 | period == 2022 | period == 2023) %>%
   filter(common_name == "Alaska pollock(=Walleye poll.)") %>%
   ggplot(mapping=aes(x=period)) +
-  geom_bar(mapping=aes(fill=period)) 
+  geom_bar(mapping=aes(fill=period)) +
+  labs(title = "The Total Catch by Year for the Alaska Pollock Species", x = "Year", y = "Total Catch")
 ```
 
-10. Perform one exploratory analysis of your choice. Make sure to clearly state the question you are asking before writing any code.
-```{r}
+There is an overall trend of reduction in the fishing of this particular species over this decade, likely suggesting an underlying factor of overfishing and the need to protect this population.
 
+10. Perform one exploratory analysis of your choice. Make sure to clearly state the question you are asking before writing any code.
+
+How has total catch changed over time period across different continents?
+```{r}
+fisheries_clean %>%
+  group_by(period, continent) %>%
+  summarize(total_catch = sum(catch, na.rm = T)) %>%
+  ggplot(aes(x=period, y = total_catch, group = continent)) +
+  geom_line(mapping=aes(color=continent)) +
+  labs(title = "Total Catch of Fish Species over Time by Continent", x = "Time Period", y = "Total Catch")
 ```
 
 ## Knit and Upload

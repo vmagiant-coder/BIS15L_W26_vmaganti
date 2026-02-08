@@ -80,7 +80,7 @@ separate(
 ```{r}
 avg_enterococci_year <- sydneybeaches_long %>%
 group_by(Site, year) %>%
-summarize(avg_enterococci = mean(`Enterococci (cfu/100ml)`, na.rm = T, .groups = "drop"))
+summarize(avg_enterococci = mean(`Enterococci (cfu/100ml)`, na.rm = T))
 ```
 
 8. Make the output from question 7 easier to read by pivoting it to wide format.
@@ -93,20 +93,24 @@ avg_enterococci_year <- avg_enterococci_year %>%
 ```
 
 9. What was the most polluted beach in 2013?
-#```{r}
+```{r}
 avg_enterococci_year %>%
-  filter(year == "2013") %>%
-  arrange(desc(avg_enterococci)) %>%
+  arrange(desc(`2013`)) %>%
   slice_head(n=1)
 ```
 
-```{r}
-
-```
 
 10. Explore the data! Do one analysis of your choice that includes a minimum of three lines of code.  
-```{r}
 
+Which beach has the highest overall average pollution?
+```{r}
+overall_avg_pollution <- sydneybeaches_long %>%
+  group_by(Site) %>%
+  summarize(
+    overall_avg_enterococci = mean(`Enterococci (cfu/100ml)`, na.rm = T)
+  ) %>%
+  arrange(desc(overall_avg_enterococci))
+overall_avg_pollution
 ```
 
 ## Knit and Upload

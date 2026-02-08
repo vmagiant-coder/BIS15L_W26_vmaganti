@@ -38,39 +38,66 @@ sydneybeaches <- read_csv("data/sydneybeaches.csv")
 sydneybeaches
 ```
 
+Yes, the data are tidy per the tidyverse definition. Each variable is stored in its own column, each observation is a row, and each type of observational unit is in a single table. Each row represents one measurement for one beach on one date, so this data is also in a long format.
+
 3. We are only interested in the variables site, date, and enterococci_cfu_100ml. Make a new object focused on these variables only. Name the object `sydneybeaches_long`
 ```{r}
-
+sydneybeaches_long <- sydneybeaches %>%
+  select(Site, Date, `Enterococci (cfu/100ml)`)
 ```
 
 4. Pivot the data such that the dates are column names and each beach only appears once (wide format). Name the object `sydneybeaches_wide`
 ```{r}
-
+sydneybeaches_wide <- sydneybeaches_long %>%
+  pivot_wider(
+    names_from = Date,
+    values_from = `Enterococci (cfu/100ml)`
+  )
 ```
 
 5. Pivot the data back so that the dates are data and not column names.
 ```{r}
-
+sydneybeaches_long <- sydneybeaches_wide %>%
+  pivot_longer(
+    cols = -Site,
+    names_to = "Date",
+    values_to = "Enterococci (cfu/100ml)"
+  )
 ```
 
 6. We haven't dealt much with dates yet, but separate the date into columns day, month, and year. Do this on the `sydneybeaches_long` data.
 ```{r}
-
+ sydneybeaches_long <- sydneybeaches_long %>%
+  rename(date = `Date`) %>%
+separate(
+  date,
+    into = c("day", "month", "year"),
+    sep = "/"
+)
 ```
 
 7. What is the average `enterococci_cfu_100ml` by year for each beach. Think about which data you will use- long or wide.
 ```{r}
-
+avg_enterococci_year <- sydneybeaches_long %>%
+group_by(Site, year) %>%
+summarize(avg_enterococci = mean(`Enterococci (cfu/100ml)`, na.rm = T, .groups = "drop"))
 ```
 
 8. Make the output from question 7 easier to read by pivoting it to wide format.
 ```{r}
-
+avg_enterococci_year <- avg_enterococci_year %>%
+  pivot_wider(
+    names_from = year,
+    values_from = avg_enterococci
+  )
 ```
 
 9. What was the most polluted beach in 2013?
-```{r}
-
+#```{r}
+avg_enterococci_year %>%
+  filter(year == "2013") %>%
+  arrange(desc(avg_enterococci)) %>%
+  slice_head(n=1)
 ```
 
 ```{r}

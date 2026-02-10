@@ -94,11 +94,17 @@ avg_enterococci_year <- avg_enterococci_year %>%
 
 9. What was the most polluted beach in 2013?
 ```{r}
-avg_enterococci_year %>%
-  arrange(desc(`2013`)) %>%
+sydneybeaches_long %>%
+  filter(year == "2013") %>%
+  group_by(Site) %>%
+  summarize(
+  avg_enterococci = mean(`Enterococci (cfu/100ml)`, na.rm = T)
+  ) %>%
+  arrange(desc(avg_enterococci)) %>%
   slice_head(n=1)
 ```
 
+On average, the beach with the highest pollution in 2013 was Little Bay Beach with an Enterococci value of 121.5345 cfu/100ml.
 
 10. Explore the data! Do one analysis of your choice that includes a minimum of three lines of code.  
 
@@ -109,9 +115,12 @@ overall_avg_pollution <- sydneybeaches_long %>%
   summarize(
     overall_avg_enterococci = mean(`Enterococci (cfu/100ml)`, na.rm = T)
   ) %>%
-  arrange(desc(overall_avg_enterococci))
+  arrange(desc(overall_avg_enterococci)) %>%
+  slice_head(n=1)
 overall_avg_pollution
 ```
+
+Malabar Beach has the highest overall average pollution.
 
 ## Knit and Upload
 Please knit your work as an .html file and upload to Canvas. Homework is due before the start of the next lab. No late work is accepted. Make sure to use the formatting conventions of RMarkdown to make your report neat and clean!  

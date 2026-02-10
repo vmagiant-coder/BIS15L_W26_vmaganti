@@ -53,11 +53,12 @@ sharks %>%
    slice_head(n=5)
 ```
 
+
 2.  Make a plot that shows the total number of incidents per county.
 ```{r}
 sharks %>%
 ggplot(aes(x=county)) +
-  geom_bar(aes(fill=county))+
+  geom_bar()+
   coord_flip() +
   labs(title="Total Number of Incidents by County", x="County", y = "Number of Incidents") +
     theme(plot.title=element_text(size=rel(1.5), hjust = 0.5)) +
@@ -69,7 +70,7 @@ ggplot(aes(x=county)) +
 sharks %>%
 ggplot(aes(x= as.factor(month))) +
   geom_bar(aes(fill= as.factor(month)))+
-  labs(title="Total Number of Shark Incidents by Month", x="Month", y = "Number of Incidents") +
+  labs(title="Total Number of Shark Incidents by Month", x="Month", y = "Number of Incidents", fill = "Month") +
   theme(plot.title=element_text(size=rel(1.5), hjust = 0.5)) +
   scale_y_log10()
 ```
@@ -77,38 +78,86 @@ Month 10 has the highest number of shark attack incidents, so the month of Octob
 
 4. Is there a time of day when most attacks occur? Make a plot that shows the total number of incidents by time of day. Which time of day has the highest number of incidents?  
 ```{r}
-
+sharks %>%
+  ggplot(aes(x=time)) +
+  geom_bar(na.rm = T)+
+  labs(title = "Shark Incidents by Time of Day", x = "Time of Day", y = "Number of Incidents") +
+  theme(plot.title=element_text(size=rel(1.5), hjust = 0.5)) +
+  theme(axis.text.x = element_text(angle=60, hjust = 1))
 ```
 
 5. How do the number and types of injuries compare by county? Make a table that shows the number of injury types by county. Which county has the highest number incidents? (hint: your table should be in wide format)
 ```{r}
-
+injury_table <- sharks %>%
+  count(county, injury) %>%
+  pivot_wider(
+    names_from = injury,
+    values_from = n,
+    values_fill = 0
+  )
+injury_table
 ```
+
+```{r}
+sharks %>%
+  count(county, sort = T) %>%
+  slice_head(n=1)
+```
+The county with the highest number of incidents is San Diego county.
 
 6. Use the table from #5 to make a plot that shows the total number of incidents by county.
 ```{r}
-
+injury_table %>%
+  mutate(total_incidents = minor + `none` + major + `minor*` + `none*` + fatal + `major*`) %>%
+  ggplot(aes(x=county, y = total_incidents)) +
+  geom_col(fill = "deeppink3", na.rm = T) +
+  coord_flip() +
+  labs(title = "Total Shark Incidents by County", x = "County", y = "Total Incidents")+
+   theme(plot.title=element_text(size=rel(1.5), hjust = 0.5))
 ```
 
 7. In the data, `mode` refers to a type of activity. Which activity is associated with the highest number of incidents?
 ```{r}
-
+sharks %>%
+  count(mode, sort = T) %>%
+  slice_head(n=1)
 ```
+
+Surfing/Boarding is associated with the highest number of incidents.
 
 8. Make a plot that compares the number of incidents by activity.
 ```{r}
-
+activity_counts <- sharks %>%
+  group_by(mode) %>%
+  summarize(total_incidents = n()) %>%
+  ggplot(aes(x = mode, y = total_incidents)) +
+  geom_col(aes(fill=mode)) +
+  coord_flip() +
+  labs(title = "Shark Incidents by Activity", x = "Activity", y = "Number of Incidents") +
+  theme(plot.title=element_text(size=rel(1.5), hjust = 0.5))
+activity_counts
 ```
 
 9. Which shark species is involved in the highest number of incidents?  
 ```{r}
-
+sharks %>%
+  count(species, sort = T) %>%
+slice_head(n=1)
 ```
+
+The Great White Shark is involved in the highest number of incidents.
 
 10. Are all incidents involving Great White's fatal? Make a plot that shows the number and types of incidents for Great White's only.  
 ```{r}
-
+great_white <- sharks %>%
+  filter(species == "White") %>%
+  ggplot(aes(x=injury)) +
+  geom_bar(aes(fill = injury)) +
+  labs(title = "Incident Outcomes for Great White Sharks", x = "Injury Type", y = "Number of Incidents") +
+  theme(plot.title=element_text(size=rel(1.5), hjust = 0.5))
+great_white
 ```
+No, not all incidents are fatal. They are mostly major, or even no injuries.
 
 ## Knit and Upload
 Please knit your work as an .html file and upload to Canvas. Homework is due before the start of the next lab. No late work is accepted. Make sure to use the formatting conventions of RMarkdown to make your report neat and clean! 

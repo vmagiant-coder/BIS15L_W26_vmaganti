@@ -53,6 +53,7 @@ sharks %>%
    slice_head(n=5)
 ```
 
+The top 5 counties/"hotspots" with the most incidents are San Diego, Humboldt, San Mateo, Santa Barbara, and Marin county.
 
 2.  Make a plot that shows the total number of incidents per county.
 ```{r}
@@ -61,8 +62,7 @@ ggplot(aes(x=county)) +
   geom_bar()+
   coord_flip() +
   labs(title="Total Number of Incidents by County", x="County", y = "Number of Incidents") +
-    theme(plot.title=element_text(size=rel(1.5), hjust = 0.5)) +
-  scale_y_log10()
+    theme(plot.title=element_text(size=rel(1.5), hjust = 0.5)) 
 ```
 
 3. Are there months of the year when incidents are more likely to occur? Make a plot that shows the total number of incidents by month. Which month has the highest number of incidents?  
@@ -74,6 +74,7 @@ ggplot(aes(x= as.factor(month))) +
   theme(plot.title=element_text(size=rel(1.5), hjust = 0.5)) +
   scale_y_log10()
 ```
+
 Month 10 has the highest number of shark attack incidents, so the month of October. Incidents are more likely to occur around month 7 to month 10, so around July to October.
 
 4. Is there a time of day when most attacks occur? Make a plot that shows the total number of incidents by time of day. Which time of day has the highest number of incidents?  
@@ -85,6 +86,8 @@ sharks %>%
   theme(plot.title=element_text(size=rel(1.5), hjust = 0.5)) +
   theme(axis.text.x = element_text(angle=60, hjust = 1))
 ```
+
+11:00 A.M. is the time of day with the highest number of incidents.
 
 5. How do the number and types of injuries compare by county? Make a table that shows the number of injury types by county. Which county has the highest number incidents? (hint: your table should be in wide format)
 ```{r}
@@ -103,6 +106,7 @@ sharks %>%
   count(county, sort = T) %>%
   slice_head(n=1)
 ```
+
 The county with the highest number of incidents is San Diego county.
 
 6. Use the table from #5 to make a plot that shows the total number of incidents by county.
@@ -157,6 +161,7 @@ great_white <- sharks %>%
   theme(plot.title=element_text(size=rel(1.5), hjust = 0.5))
 great_white
 ```
+
 No, not all incidents are fatal. They are mostly major, or even no injuries.
 
 ## Knit and Upload

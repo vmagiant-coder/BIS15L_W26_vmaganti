@@ -45,24 +45,38 @@ glimpse(gapminder)
 2. How many countries are represented in this dataset?
 ```{r}
 gapminder %>%
-count(country) %>%
-  select(n) %>%
-  distinct()
+summarize(n_countries = n_distinct(country))
 ```
 
 3. Which five countries have had the largest absolute population growth between 1925-2025? Show this as a table.
 ```{r}
-gapminder %>%
+population_growth <- gapminder %>%
   filter(year %in% c(1925, 2025)) %>%
-     mutate(year=factor(year)) %>% 
-    select(country, year, population) %>%
-pivot_wider()
-      
+     mutate(year=factor(year)) %>%
+    select(country, year, pop) %>%
+pivot_wider(
+  names_from = year,
+  values_from = pop
+) %>%
+  mutate(abs_growth = `2025`-`1925`) %>%
+  arrange(desc(abs_growth)) %>%
+  slice_head(n=5)
+
+population_growth
 ```
 
 4. Make a plot that shows population growth over time for the top country you found in question #3.
 ```{r}
-
+gapminder %>%
+  filter(country == population_growth$country[1]) %>%
+  ggplot(aes(x=year, y = pop)) +
+  geom_line(color="turquoise4") +
+  geom_point(color="turquoise1") +
+  labs(title = "Population Growth over Time of India",
+       x="Year",
+       y="Population") +
+  theme_minimal() +
+  theme(plot.title=element_text(size=rel(1.5), hjust = 0.27))
 ```
 
 5. Has global life expectancy changed between 1925 and 2025? Show the min, median, mean, and max for all countries (combined) in the dataset.

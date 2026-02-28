@@ -5,7 +5,8 @@ library(janitor)
 library(shiny)
 library(shinydashboard)
 
-library(shiny)
+elephants <- read_csv("data/elephants_data/elephants.csv") %>%
+  clean_names()
 
 ui <- dashboardPage(
   

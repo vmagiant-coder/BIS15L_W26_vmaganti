@@ -1189,3 +1189,48 @@ server <- function(input, output) {
 }
 
 shinyApp(ui, server)
+
+
+In RStudio, select plots based on data type and analysis goals: Use histograms for single continuous variable distributions, scatter plots for two-variable relationships, and line plots for trends over time. Bar/column charts compare categorical groups, while boxplots (distribution graphs) are best for comparing data spread and outliers. 
+Bookdown
+Bookdown
++5
+Here is a guide to selecting plots in R (typically using ggplot2):
+  1. Histograms (geom_histogram)
+When to use: To visualize the shape, center, and spread of a single continuous numerical variable.
+Example: Showing the distribution of employee salaries or age ranges.
+Key Aspect: Data is divided into "bins" (intervals), and the height represents the frequency. 
+
+
+2. Distribution Plots / Boxplots (geom_boxplot, geom_density)
+When to use: To compare numerical data distributions across multiple categories, specifically highlighting the median, quartiles, and outliers.
+Example: Comparing test scores (numeric) between different classes (categorical).
+Alternative: Use geom_density() to show the smooth probability distribution instead of boxplots. 
+
+
+3. Bar & Column Charts (geom_bar, geom_col)
+When to use: To compare values across discrete categories.
+geom_bar(): Used when you want R to count the frequency of occurrences for each category (e.g., number of cars per cylinder type).
+geom_col(): Used when you have pre-calculated values and want the bar height to represent that exact value (e.g., total sales per region). 
+
+
+4. Scatter Plots (geom_point) 
+When to use: To determine the relationship or correlation between two numerical variables.
+Example: Showing the relationship between advertising spend (x-axis) and sales revenue (y-axis).
+Add-on: Use geom_smooth() to add a regression line to see the trend. 
+
+5. Line Plots (geom_line)
+When to use: To display trends over an ordered variable, most commonly time.
+Example: Stock prices over the last 12 months or temperature changes over a day. 
+
+
+geom_bar() automatically calculates the count of observations for each category on the X-axis and maps this count to the Y-axis. You only need to specify the x aesthetic.
+geom_col() requires you to explicitly provide values for both the X and Y aesthetics, where the Y-value is a pre-calculated measure (e.g., mean, sum, or a value already present in your data).
+
+Summary Table for R Selection
+Plot Type 	Goal	Data Type (X)	Data Type (Y)
+Histogram	Distribution/Shape	Continuous	Frequency
+Boxplot	Distribution/Outliers	Categorical	Continuous
+Bar/Column	Categorical Comparison	Categorical	Discrete/Total
+Scatter	Relationship/Correlation	Continuous	Continuous
+Line	Time Series/Trend	Time/Ordered	Continuous

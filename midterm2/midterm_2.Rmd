@@ -1,6 +1,7 @@
 ---
 title: "Midterm 2 W26"
 date: "`r Sys.Date()`"
+name: "Vaishnavi Maganti"
 output:
   html_document:
     theme: spacelab
@@ -33,7 +34,7 @@ library(shiny)
 ## API Key
 Since you will build a map as part of the exam, take a moment to register your API key. You may need to look up your [stadia maps](https://client.stadiamaps.com/dashboard/overview) API key online (please do that now).
 ```{r}
-#register_stadiamaps("YOUR API KEY", write = FALSE)
+register_stadiamaps("e90f7f28-b515-4bb7-a0e1-807ba10a7ee8", write = FALSE)
 ```
 
 ## About the data
@@ -72,25 +73,174 @@ polar_bears <-
 
 1. (2 points) List the variable names and use a summary function to get an idea of the data structure.
 
+```{r}
+names(polar_bears)
+```
+
+```{r}
+summary(polar_bears)
+```
+```{r}
+glimpse(polar_bears)
+```
+
+
 2. (3 points) How are NA's represented and where are they distributed in the variables? Use the `naniar` package to visualize the distribution of NA's in the data and replace any alternative representations of NA with actual NA values.
+
+```{r}
+polar_bears %>%
+summarize(across(everything(), ~ sum(is.na(.))))
+```
+
+```{r}
+polar_bears %>%
+summarize(across(everything(), ~ sum(.==-999)))
+```
+
+
+```{r}
+polar_bears_no_nas <- polar_bears %>%
+  replace_with_na_all(condition = ~.x == -999) %>%
+  miss_var_summary()
+polar_bears_no_nas
+```
+
+
+The possible NA values or -999 values representing NA values have been cleaned from the data set.
 
 3. (6 points) Is sampling even for both sexes? Make a count the shows the number of males and females sampled by population and make a plot to visualize the counts.
 
+```{r}
+polar_bears %>%
+  group_by(popn) %>%
+  count(sex)
+```
+No, sampling is not even for both sexes.
+
+```{r}
+polar_bears %>%
+  group_by(popn) %>%
+  ggplot(aes(x=popn, fill = sex)) +
+  geom_bar(na.rm=T, position="dodge")+
+  theme(axis.text.x = element_text(angle = 60, hjust=1))+
+  labs(title = "Number of Males and Females per Bear Population",
+       x = "Population Type",
+       y= "Number of Males and Females",
+       fill= "Sex") +
+  theme_minimal() +
+  theme(plot.title=element_text(size=rel(1.5), hjust = 0.27))
+```
+
+
 4. (6 points) How many bears were sampled in each year for both populations? Make a line plot(s) to visualize sampling by year for both populations. (hint: you will need to pull apart the date to get the year in its own column)
+
+
+#```{r}
+#polar_bears <- polar_bears %>%
+separate(capture_date, c("year", "month", "day")) %>%
+count(year) %>%
+ggplot(mapping=aes(x=year, y = n)) +
+geom_line(na.rm = T, color = "pink") +
+geom_point(shape = 3) +
+  labs(title="Bears Sampled each year for Both Populations",
+       x="Population",
+       y="Number of Bears Sampled")
+```
+
 
 5. (2 points) What are the min, median, mean, and max values for `urea_nitrogen` and `creatinine`?
 
+```{r}
+polar_bears %>%
+  summarize(urea_mean_val=mean(urea_nitrogen),
+            urea_max_val=max(urea_nitrogen),
+            urea_min_val=min(urea_nitrogen),
+            urea_med_val=median(urea_nitrogen))
+```
+
+```{r}
+polar_bears %>%
+  summarize(creat_mean_val=mean(creatinine),
+            creat_max_val=max(creatinine),
+            creat_min_val=min(creatinine),
+            creat_med_val=median(creatinine))
+```
+
+
 6. (3 points) As explained above, the ratio of `urea_nitrogen` to `creatinine` is used as an index of fasting. To calculate the ratio, we need to multiply `urea_nitrogen` by 0.466, then divide by `creatinine`. Create a new variable called `un_creat_ratio` that contains this calculation.
+
+```{r}
+polar_bears <- polar_bears %>%
+  mutate(un_creat_ratio=(0.466 * urea_nitrogen)/creatinine)
+polar_bears
+```
 
 7. (4 points) The authors of the study categorized bears as fasting if their `un_creat_ratio` was less than or equal to 10. Use `case_when()` to create a new variable called `fasting` that categorizes bears as fasting or not.
 
+```{r}
+fasting <- polar_bears %>%
+  mutate(fasting = case_when(
+    un_creat_ratio <= 10 ~ "fasting",
+    TRUE ~ NA_character_
+  )) %>%
+   drop_na(fasting)
+fasting
+```
+
+
 8. (6 points) The authors found that the number of fasting bears increased in the SB population but decreased in the CS population. Make a plot(s) that shows the number of fasting bears by year for both populations to visualize this trend.
+
+#```{r}
+polar_bears %>%
+  select(year, population, fasting) %>%
+  filter(fasting = "fasting") %>%
+  group_by(year) %>%
+  count(popn) %>%
+  ggplot(mapping = aes(x=year)) +
+  geom_bar(fill = popn, position = "dodge") +
+  labs(title = "The Number of Fasting Bears by Population Type by Year",
+       x = "Year",
+       y = "Count")
+```
+
 
 9. (8 points) Where are the polar bears used in this study located? Make a static (not leaflet) distribution map that shows the locations of  bears by population. (hint: use `color=popn` in the `aes()` of `geom_point()`)
 
-10. (10 points) Build a simple shiny app that shows the range of `un_creat_ratio` values for both populations. The user should be able to select the fill variable and choose between sex, mating, age_class, denning, and fasting. Please use the code chunk below so that your exam knits.
-```{r, eval=F, echo=T}
+#```{r}
+bearslong <- polar_bears %>%
+  select(long)
+bearslat <- polar_bears %>%
+  select(lat) %>%
+  bearsbox <- make_bbox(long, bearslat, f = 0.03) 
+bearsmap <- get_stadiamap(bearsbox, maptype = "stamen terrain", zoom = 5, color = "blue", alpha = 0.8)
+ggmap(bearsmap)
+```
 
+
+10. (10 points) Build a simple shiny app that shows the range of `un_creat_ratio` values for both populations. The user should be able to select the fill variable and choose between sex, mating, age_class, denning, and fasting. Please use the code chunk below so that your exam knits.
+#```{r, eval=F, echo=T}
+library(shiny)
+
+ui <- fluidPage(
+  selectInput("Fill",
+              "Select Fill",
+              choices = c("sex", "mating", "age_class", "denning", "fasting"),
+              selected = "mating"),
+   plotOutput("plot", width = "600px", height = "500px")
+)
+
+server <- function(input, output, session) {
+  output$plot <- renderPlot({
+    
+    polar_bears %>%
+       filter(popn == input$x) %>%
+       ggplot(aes(x=sex, fill = sex)) +
+       geom_bar(alpha = 0.8, color = "black") +
+       labs(x="Sex", y = NULL) +
+       theme_minimal()
+}
+
+shinyApp(ui, server)
 ```
 
 ## Submit the Midterm

@@ -48,10 +48,10 @@ ggplot(aes(x=order)) +
 ```
 `geom_col`
 ```{r}
-ggplot(data = life_history,
-       mapping=aes(x=order, y = )) +
-  geom_col(aes(fill=order)) +
-  labs(title = "Number of Observations for Each Order of Mammals", x = "Mammal Order", y = "Number of Observations")
+#ggplot(data = life_history,
+     #  mapping=aes(x=order, y = wtv)) +
+  #geom_col(aes(fill=order)) +
+  # labs(title = "Number of Observations for Each Order of Mammals", x = "Mammal Order", y = "Number of Observations")
 ```
 
 ```{r}

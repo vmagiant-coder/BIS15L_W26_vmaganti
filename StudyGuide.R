@@ -872,3 +872,320 @@ data_clean %>%
   mutate(distance = na_if(distance, -999)) %>%
   group_by(hunt_cat) %>%
   summarize(mean_distance = mean(distance, na.rm = TRUE))
+
+
+
+BIS 015L MIDTERM PRACTICE + CHEAT SHEET
+
+Load packages:
+  
+  library(tidyverse)
+library(RColorBrewer)
+library(paletteer)
+library(lubridate)
+library(ggmap)
+library(sf)
+library(shiny)
+library(shinydashboard)
+
+Create practice dataset:
+  
+  animals <- tibble(
+    id = 1:10,
+    species = c("cat","cat","dog","dog","dog","bird","bird","cat","dog","bird"),
+    weight = c(8, 10, 20, 22, 25, 2, 3, NA, 18, 4),
+    sex = c("F","M","F","M","F","F","M","F","M","M"),
+    year = c(2020,2020,2021,2021,2022,2020,2021,2022,2022,2021)
+  )
+
+group_by() and summarize()
+
+What they do:
+  
+  group_by() splits data into groups
+
+summarize() calculates statistics per group
+
+Example Question 1:
+  Find the mean weight of each species.
+
+animals %>%
+  group_by(species) %>%
+  summarize(mean_weight = mean(weight, na.rm = TRUE))
+
+Example Question 2:
+  How many animals of each species are there?
+  
+  animals %>%
+  group_by(species) %>%
+  summarize(count = n())
+
+Example Question 3:
+  Find the average weight by species AND sex.
+
+animals %>%
+  group_by(species, sex) %>%
+  summarize(mean_weight = mean(weight, na.rm = TRUE))
+
+pivot_longer() and pivot_wider()
+
+Create wide dataset:
+  
+  wide_data <- tibble(
+    id = 1:3,
+    height_2020 = c(10,12,14),
+    height_2021 = c(11,13,15)
+  )
+
+Example Question 1:
+  Convert this wide dataset into long format.
+
+long_data <- wide_data %>%
+  pivot_longer(cols = height_2020:height_2021,
+               names_to = "year",
+               values_to = "height")
+
+Example Question 2:
+  Convert long_data back to wide format.
+
+long_data %>%
+  pivot_wider(names_from = year,
+              values_from = height)
+
+Barplots (geom_bar, geom_col)
+
+Example Question 1:
+  Make a barplot showing number of animals per species.
+
+ggplot(animals, aes(x = species)) +
+  geom_bar()
+
+Example Question 2:
+  Make a barplot showing average weight per species.
+
+summary_data <- animals %>%
+  group_by(species) %>%
+  summarize(mean_weight = mean(weight, na.rm = TRUE))
+
+ggplot(summary_data, aes(x = species, y = mean_weight)) +
+  geom_col()
+
+Stacked vs Dodged Barplots
+
+Example Question 1:
+  Create a stacked barplot showing species by sex.
+
+ggplot(animals, aes(x = species, fill = sex)) +
+  geom_bar()
+
+Example Question 2:
+  Create side-by-side barplot.
+
+ggplot(animals, aes(x = species, fill = sex)) +
+  geom_bar(position = "dodge")
+
+Scatterplots, Boxplots, Line Plots
+
+Example Question 1:
+  Create scatterplot of weight vs year.
+
+ggplot(animals, aes(x = year, y = weight)) +
+  geom_point()
+
+Example Question 2:
+  Create boxplot of weight by species.
+
+ggplot(animals, aes(x = species, y = weight)) +
+  geom_boxplot()
+
+Example Question 3:
+  Create line plot of average weight per year.
+
+animals %>%
+  group_by(year) %>%
+  summarize(mean_weight = mean(weight, na.rm = TRUE)) %>%
+  ggplot(aes(x = year, y = mean_weight)) +
+  geom_line()
+
+Histograms and Density Plots
+
+Example Question:
+  Plot distribution of weight.
+
+ggplot(animals, aes(x = weight)) +
+  geom_histogram(bins = 5)
+ggplot(animals, aes(x = weight)) +
+  geom_density()
+
+Colors and Aesthetics
+
+Example Question:
+  Improve readability using color.
+
+ggplot(animals, aes(x = species, fill = species)) +
+  geom_bar() +
+  scale_fill_brewer(palette = "Set1") +
+  theme_minimal()
+
+Using paletteer:
+  
+  ggplot(animals, aes(x = species, fill = species)) +
+  geom_bar() +
+  scale_fill_paletteer_d("RColorBrewer::Set2")
+
+case_when()
+
+Example Question:
+  Create weight category: small (<5), medium (5–15), large (>15).
+
+animals <- animals %>%
+  mutate(size_category = case_when(
+    weight < 5 ~ "small",
+    weight >= 5 & weight <= 15 ~ "medium",
+    weight > 15 ~ "large",
+    TRUE ~ NA_character_
+  ))
+
+Plot using new category:
+  
+  ggplot(animals, aes(x = size_category)) +
+  geom_bar()
+
+Faceting
+
+Example Question:
+  Create histogram of weight separated by species.
+
+ggplot(animals, aes(x = weight)) +
+  geom_histogram(bins = 5) +
+  facet_wrap(~ species)
+
+NA Handling (Important)
+
+Definition:
+  NA means missing value in R.
+
+Example Question 1:
+  Count total NAs.
+
+sum(is.na(animals))
+
+Example Question 2:
+  Count NAs per column.
+
+colSums(is.na(animals))
+
+Example Question 3:
+  Remove rows with NA.
+
+animals_no_na <- drop_na(animals)
+
+Example Question 4:
+  Replace weight 0 with NA.
+
+animals <- animals %>%
+  mutate(weight = ifelse(weight == 0, NA, weight))
+
+Important:
+  Always use na.rm = TRUE in summaries.
+
+Joins
+
+Create second dataset:
+  
+  owners <- tibble(
+    id = c(1,2,3,4,5),
+    owner_name = c("A","B","C","D","E")
+  )
+
+Example Question 1:
+  Left join owners to animals.
+
+left_join(animals, owners, by = "id")
+
+Example Question 2:
+  Inner join.
+
+inner_join(animals, owners, by = "id")
+
+Dates
+
+Example Question:
+  Convert character to date and extract year.
+
+animals$date <- ymd("2025-03-02")
+year(animals$date)
+month(animals$date)
+
+Vector vs Raster
+
+Vector:
+  Points, lines, polygons.
+
+Raster:
+  Grid of pixels (continuous data like temperature).
+
+Exam question example:
+  Explain which data type is used for GPS coordinates.
+Answer: Vector.
+
+ggmap and Coordinates
+
+Example dataset:
+  
+  locations <- data.frame(
+    lon = c(-121.7, -122.4),
+    lat = c(38.5, 37.7)
+  )
+
+Plot:
+  
+  ggplot(locations, aes(x = lon, y = lat)) +
+  geom_point()
+
+Bounding box:
+  
+  bbox(locations)
+
+Basic Shiny App
+
+Example Question:
+  Build app with slider controlling histogram sample size.
+
+ui <- fluidPage(
+  sliderInput("num", "Sample Size", 10, 1000, 100),
+  plotOutput("hist")
+)
+
+server <- function(input, output) {
+  output$hist <- renderPlot({
+    hist(rnorm(input$num))
+  })
+}
+
+shinyApp(ui, server)
+
+Add New Input to Shiny
+
+selectInput("color", "Choose Color",
+            choices = c("red","blue","green"))
+
+shinydashboard Example
+
+ui <- dashboardPage(
+  dashboardHeader(title = "My Dashboard"),
+  dashboardSidebar(
+    sliderInput("num","Number",10,500,100)
+  ),
+  dashboardBody(
+    plotOutput("hist")
+  )
+)
+
+server <- function(input, output) {
+  output$hist <- renderPlot({
+    hist(rnorm(input$num))
+  })
+}
+
+shinyApp(ui, server)

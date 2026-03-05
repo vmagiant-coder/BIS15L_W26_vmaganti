@@ -1,0 +1,280 @@
+---
+title: "Midterm 2 Corrections"
+author: "Vaishnavi Maganti"
+date: "2026-03-05"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Load the libraries
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(janitor)
+library(naniar)
+library(ggmap)
+library(lubridate)
+library(shiny)
+``` 
+
+```{r}
+register_stadiamaps("e90f7f28-b515-4bb7-a0e1-807ba10a7ee8", write = FALSE)
+```
+
+```{r}
+getwd()
+```
+
+```{r}
+setwd("/Users/magantiv/Desktop/clone_repository_github/BIS15L_W26_vmaganti/midterm2")
+```
+
+
+## Load the data
+Run the code chunk below to load the data, clean the names, and do some tidying.
+```{r message=FALSE, warning=FALSE}
+polar_bears <- 
+  read_csv("data/polarBear_serumUreaCreatinine_beaufortChukchi_rode.csv") %>% 
+  clean_names() %>% 
+  select(-den_method, -no_cubs, -cub_age) %>%
+  filter(age_class==c("A", "S")) %>% 
+  mutate(sex=toupper(sex), 
+         age_class=toupper(age_class))
+```
+
+
+##Question 2:
+
+My Answer:
+```{r}
+polar_bears %>%
+summarize(across(everything(), ~ sum(is.na(.))))
+```
+
+```{r}
+polar_bears %>%
+summarize(across(everything(), ~ sum(.==-999)))
+```
+
+```{r}
+polar_bears_no_nas <- polar_bears %>%
+  replace_with_na_all(condition = ~.x == -999) %>%
+  miss_var_summary()
+polar_bears_no_nas
+```
+
+Mistake:
+I realized that I initially just summarized NA values and -999 values but didn't properly replace any of those -999 values with actual NA values and vizualize the missing data.
+
+Correction:
+I used replace_with_na_all() to convert all -999 values to NA and summarized missing values with miss_var_summary(). I also vizualized the missing values before and after cleaning with the naniar package.
+
+#Corrected Question 2
+
+```{r}
+summary(polar_bears)
+```
+
+```{r}
+polar_bears %>%
+  summarize(across(everything(), ~sum(is.na(.))))
+```
+```{r}
+polar_bears %>%
+   summarize(across(everything(), ~ sum(.==-999, na.rm = T)))
+```
+```{r}
+gg_miss_var(polar_bears) +
+labs(title = "Missing Values Before Cleaning")
+polar_bears_no_nas <- polar_bears %>%
+  replace_with_na_all(condition = ~ .x == -999) 
+```
+
+```{r}
+gg_miss_var(polar_bears_no_nas) +
+labs(title = "Missing Values After Cleaning")
+```
+---
+##Question 4:
+
+My Answer:
+```{r}
+#polar_bears <- polar_bears %>%
+#separate(capture_date, c("year", "month", "day")) %>%
+#count(year) %>%
+#ggplot(mapping=aes(x=year, y = n)) +
+#geom_line(na.rm = T, color = "pink") +
+#geom_point(shape = 3) +
+  #labs(title="Bears Sampled each year for Both Populations",
+       #x="Population",
+       #y="Number of Bears Sampled")
+```
+
+Mistake: I was not able to properly extract the year from the capture_date and I also did not group by population, so the plot didn't run/correctly show sampling trends per population, which is why the code has also been commented out.
+
+Correction: I separated capture_date into year/month/day, grouped by year and population, and plotted lines and points for each of the bear populations using the polar_bears_no_nas data I had cleaned from my corrected answer to Question 2.
+
+```{r}
+polar_bears_no_nas <- polar_bears_no_nas %>%
+  separate(capture_date, into = c("year", "month", "day"), sep = "-", remove = F)
+
+polar_bears_no_nas %>%
+  count(popn, year) %>%
+  ggplot(aes(x = as.numeric(year), y = n, color = popn)) +
+  geom_line() +
+  geom_point() +
+  labs(title = "Numbers of Bears Sampled Each Year by Population",
+       x = "Year",
+       y = "Number of Bears") +
+  theme_minimal() +
+  theme(plot.title=element_text(size=rel(1.5), hjust = 0.27))
+```
+
+---
+
+##Question 7
+
+My Answer:
+
+```{r}
+#fasting <- polar_bears %>%
+  #mutate(fasting = case_when(
+    #un_creat_ratio <= 10 ~ "fasting",
+    #TRUE ~ NA_character_
+  #)) %>%
+  # drop_na(fasting)
+#fasting
+```
+
+My Mistake: I used case_when() but then dropped all the non-fasting bears with drop_na(fasting), so the variable was incomplete. Because of this, the non-fasting category was missing as well. I also created a new obkect fasting instead of properly updating the polar_bears_no_nas data set.
+
+
+Correction: I used mutate() on polar_bears_no_nas and created a fasting variable that is complete with "fasting" and "non-fasting" labels for all the rows, without dropping any data.
+
+```{r}
+polar_bears_no_nas <- polar_bears_no_nas %>%
+  mutate(un_creat_ratio = (0.466 * urea_nitrogen)/ creatinine,
+         fasting = case_when(
+           un_creat_ratio <= 10 ~ "fasting",
+           TRUE ~ "not_fasting"
+         ))
+```
+
+---
+
+##Question 8
+
+My Answer: 
+```{r}
+#polar_bears %>%
+ # select(year, population, fasting) %>%
+  #filter(fasting = "fasting") %>%
+  #group_by(year) %>%
+ #count(popn) %>%
+ #ggplot(mapping = aes(x=year)) +
+  #geom_bar(fill = popn, position = "dodge") +
+  #labs(title = "The Number of Fasting Bears by Population Type by Year",
+       #x = "Year",
+       #y = "Count")
+```
+
+My Mistake: I used filter(fasting = "fasting") instead of ==, so the filter didn't work correctly, and this question was also incorrect due to my work for Question 7 being incorrect. I also did not properly group by both year and population, and mapped the fill command incorrectly, so the plot ultimately failed to show the number of fasting bears per year AND population.
+
+Correction: I corrected the filter comand to fasting == "fasting", grouped by year and population, and made sure the fill command was = to population correctly. This gives the correct bar plot.
+
+```{r}
+polar_bears_no_nas %>%
+  filter(fasting == "fasting") %>%
+  count(year, popn) %>%
+  ggplot(aes(x= as.numeric(year), y = n, fill = popn)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(title = "The Number of Fasting Bears by Population Type by Year",
+       x = "Year",
+       y = "Number of Fasting Bears") +
+  theme_minimal()
+```
+
+---
+
+##Question 9
+
+My Answer:
+
+```{r}
+bearslong <- polar_bears %>%
+  select(long)
+bearslat <- polar_bears %>%
+  select(lat) %>%
+  bearsbox <- make_bbox(long, bearslat, f = 0.03) 
+bearsmap <- get_stadiamap(bearsbox, maptype = "stamen terrain", zoom = 5, color = "blue", alpha = 0.8)
+ggmap(bearsmap)
+```
+
+My Mistake: I made tibbles instead of vectors that are numeric for make_bbox(), so the bounding box didn't work properly. I also didn't plot the points colored by population, so the map didn't show which bears belonged to which population.
+
+Correction: I converted latitude and longitude to numeric vectors and then created a proper bounding box. I then also made a static map with get_stadiamap() and plotted the bear locations with geom_point() colored by population, which shows the distribution clearly.
+
+```{r}
+polar_bears_no_nas %>%
+  select(lat, long) %>%
+summary()
+```
+
+```{r}
+lat <- c(62.46, 72.70)
+long <- c(-172.2, -134.8)
+bbox <- make_bbox(long, lat, f = 0.03)
+```
+
+```{r}
+bears_map <- get_stadiamap(bbox, maptype = "stamen_terrain", zoom = 5)
+```
+
+```{r}
+ggmap(bears_map) +
+  geom_point(
+    data=polar_bears_no_nas, 
+    aes(x = long, y = lat, color = popn), 
+    size = 2,
+    alpha = 0.7) +
+  labs(title = "Polar Bear Locations by Population",
+       x = "Longitude",
+       y = "Latitude",
+       color = "Population") +
+  theme_minimal()
+```
+
+---
+
+##Question 10
+
+My Answer:
+
+#```{r, eval=F, echo=T}
+#library(shiny)
+
+#ui <- fluidPage(
+  #selectInput("Fill",
+              #"Select Fill",
+              #choices = c("sex", "mating", "age_class", "denning", #"fasting"),
+              #selected = "mating"),
+   #plotOutput("plot", width = "600px", height = "500px")
+#)
+
+#server <- function(input, output, session) {
+  #output$plot <- renderPlot({
+    
+    #polar_bears %>%
+      #filter(popn == input$x) %>%
+      # ggplot(aes(x=sex, fill = sex)) +
+       #geom_bar(alpha = 0.8, color = "black") +
+       #labs(x="Sex", y = NULL) +
+       #theme_minimal()
+#}
+
+#shinyApp(ui, server)
+#```
+
+My Mistake:

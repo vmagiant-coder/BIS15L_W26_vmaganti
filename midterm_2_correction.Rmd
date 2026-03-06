@@ -27,16 +27,13 @@ register_stadiamaps("e90f7f28-b515-4bb7-a0e1-807ba10a7ee8", write = FALSE)
 getwd()
 ```
 
-```{r}
-setwd("/Users/magantiv/Desktop/clone_repository_github/BIS15L_W26_vmaganti/midterm2")
-```
 
 
 ## Load the data
 Run the code chunk below to load the data, clean the names, and do some tidying.
 ```{r message=FALSE, warning=FALSE}
 polar_bears <- 
-  read_csv("data/polarBear_serumUreaCreatinine_beaufortChukchi_rode.csv") %>% 
+  read_csv("midterm2/data/polarBear_serumUreaCreatinine_beaufortChukchi_rode.csv") %>% 
   clean_names() %>% 
   select(-den_method, -no_cubs, -cub_age) %>%
   filter(age_class==c("A", "S")) %>% 
@@ -65,11 +62,11 @@ polar_bears_no_nas <- polar_bears %>%
 polar_bears_no_nas
 ```
 
-Mistake:
-I realized that I initially just summarized NA values and -999 values but didn't properly replace any of those -999 values with actual NA values and vizualize the missing data.
+My Mistake:
+I realized that I initially just summarized NA values and -999 values but didn't properly replace any of those values with actual NA values and visualize the missing data.
 
 Correction:
-I used replace_with_na_all() to convert all -999 values to NA and summarized missing values with miss_var_summary(). I also vizualized the missing values before and after cleaning with the naniar package.
+I used replace_with_na_all() to convert the values to NA and summarized missing values with miss_var_summary(). I also visualized the missing values before and after cleaning with the naniar package.
 
 #Corrected Question 2
 
@@ -81,10 +78,7 @@ summary(polar_bears)
 polar_bears %>%
   summarize(across(everything(), ~sum(is.na(.))))
 ```
-```{r}
-polar_bears %>%
-   summarize(across(everything(), ~ sum(.==-999, na.rm = T)))
-```
+
 ```{r}
 gg_miss_var(polar_bears) +
 labs(title = "Missing Values Before Cleaning")
@@ -182,14 +176,16 @@ My Answer:
 
 My Mistake: I used filter(fasting = "fasting") instead of ==, so the filter didn't work correctly, and this question was also incorrect due to my work for Question 7 being incorrect. I also did not properly group by both year and population, and mapped the fill command incorrectly, so the plot ultimately failed to show the number of fasting bears per year AND population.
 
-Correction: I corrected the filter comand to fasting == "fasting", grouped by year and population, and made sure the fill command was = to population correctly. This gives the correct bar plot.
+Correction: I corrected the filter command to fasting == "fasting", grouped by year and population, and made sure the fill command was = to population correctly. This gives the correct line plot.
 
 ```{r}
 polar_bears_no_nas %>%
   filter(fasting == "fasting") %>%
-  count(year, popn) %>%
-  ggplot(aes(x= as.numeric(year), y = n, fill = popn)) +
-  geom_bar(stat = "identity", position = "dodge") +
+  group_by(year, popn) %>%
+  summarize(n = n(), .groups = "drop") %>%
+  ggplot(aes(x= as.numeric(year), y = n, color = popn)) +
+  geom_line() +
+  geom_point() +
   labs(title = "The Number of Fasting Bears by Population Type by Year",
        x = "Year",
        y = "Number of Fasting Bears") +
@@ -203,13 +199,13 @@ polar_bears_no_nas %>%
 My Answer:
 
 ```{r}
-bearslong <- polar_bears %>%
-  select(long)
-bearslat <- polar_bears %>%
-  select(lat) %>%
-  bearsbox <- make_bbox(long, bearslat, f = 0.03) 
-bearsmap <- get_stadiamap(bearsbox, maptype = "stamen terrain", zoom = 5, color = "blue", alpha = 0.8)
-ggmap(bearsmap)
+#bearslong <- polar_bears %>%
+  #select(long)
+#bearslat <- polar_bears %>%
+  #select(lat) %>%
+  #bearsbox <- make_bbox(long, bearslat, f = 0.03) 
+#bearsmap <- get_stadiamap(bearsbox, maptype = "stamen terrain", zoom = 5, color = "blue", alpha = 0.8)
+#ggmap(bearsmap)
 ```
 
 My Mistake: I made tibbles instead of vectors that are numeric for make_bbox(), so the bounding box didn't work properly. I also didn't plot the points colored by population, so the map didn't show which bears belonged to which population.
@@ -237,7 +233,7 @@ ggmap(bears_map) +
   geom_point(
     data=polar_bears_no_nas, 
     aes(x = long, y = lat, color = popn), 
-    size = 2,
+    size = 0.8,
     alpha = 0.7) +
   labs(title = "Polar Bear Locations by Population",
        x = "Longitude",
@@ -277,4 +273,36 @@ My Answer:
 #shinyApp(ui, server)
 #```
 
-My Mistake:
+My Mistake: I filtered using input$x, which does not exist, and I also used a bar plot of sex instead of plotting the creatinine ratio. The app therefore did not result in users being able to choose the fill variable, which then led to inconsistencies with the rest of the problem.
+
+Correction: I created a Shiny app with a boxplot of un_creat_ratio by population and then let users select the fill variable by sex, mating, age_class, denning, or fasting. This would also allow for the range of values for both population sto be shown and to let the person using the app to choose a variable by grouping.
+
+```{r, eval=F, echo=T}
+library(shiny)
+
+ui <- fluidPage(
+  selectInput("Fill",
+              "Select Fill Variable",
+              choices = c("sex", "mating", "age_class", "denning", "fasting"), selected = "mating"),
+  plotOutput("plot", width = "600px", height = "500px")
+)
+
+server <- function(input, output, session) {
+ 
+  output$plot <- renderPlot({
+    ggplot(polar_bears_no_nas, aes(x = popn, y = un_creat_ratio, fill = .data[[input$Fill]])) +
+      geom_boxplot() +
+      labs(title = "Distribution of UN/Creatinine Ratio by Population",
+           x = "Population",
+           y = "UN/Creatinine Ratio",
+           fill = input$Fill) +
+      theme_minimal()
+    
+    
+  })
+  
+}
+
+shinyApp(ui, server)
+```
+

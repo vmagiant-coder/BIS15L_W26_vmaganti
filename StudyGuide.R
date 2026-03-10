@@ -1438,3 +1438,9 @@ server <- function(input, output) {
 }
 
 shinyApp(ui, server)
+
+
+
+corn %>%
+  distinct(fungicide) %>%
+  arrange(fungicide)

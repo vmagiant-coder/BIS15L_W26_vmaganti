@@ -19,7 +19,7 @@ Answer the following questions and complete the exercises in RMarkdown. Please e
 Make sure to use the formatting conventions of RMarkdown to make your report neat and clean!  
 
 ### Install Biostrings
-```{r,bquiet=TRUE, message=FALSE, warning=FALSE}
+```{r message=FALSE, warning=FALSE, bquiet=TRUE}
 if (!requireNamespace("BiocManager", quietly = TRUE))
   install.packages("BiocManager")
 
@@ -55,7 +55,9 @@ skip!!! **1. Read the "gene of interest" sequence from the `goi_01.txt` file int
 
 **2.Perform a blastx search using `goi_01.txt` as the query and the "core_nt" database. Download the cluster table results in CSV format, change the name to "goi_01_blastx.csv" and store in the homework/data folder. Read the csv file into R and clean the column names. Save the cleaned data frame as goi_01_blastx.**
 ```{r}
-
+goi_01_blastx <- read_csv("data/goi_01_blastx.csv") %>%
+  clean_names()
+goi_01_blastx
 ```
 
 ```{r}
@@ -64,7 +66,17 @@ skip!!! **1. Read the "gene of interest" sequence from the `goi_01.txt` file int
 
 **3.Display the top 10 blastx hits, based on e_value, for this blastx search? (Include the Scientific Name, Cluster Anscestor, Cluster Representative Sequence, Max Score, Query Cover, E value and Percent Identity)**
 ```{r}
-
+top10_blastx <- goi_01_blastx %>%
+  arrange(e_value) %>%
+  slice_head(n = 10) %>%
+  select(scientific_name,
+         cluster_ancestor,
+         cluster_representative_sequence,
+         max_score,
+         query_cover,
+         e_value,
+         percent_identity)
+top10_blastx
 ```
  
 

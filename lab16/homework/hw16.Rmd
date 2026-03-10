@@ -53,6 +53,11 @@ skip!!! **1. Read the "gene of interest" sequence from the `goi_01.txt` file int
 ```
 
 
+```{r}
+getwd()
+```
+
+
 **2.Perform a blastx search using `goi_01.txt` as the query and the "core_nt" database. Download the cluster table results in CSV format, change the name to "goi_01_blastx.csv" and store in the homework/data folder. Read the csv file into R and clean the column names. Save the cleaned data frame as goi_01_blastx.**
 ```{r}
 goi_01_blastx <- read_csv("data/goi_01_blastx.csv") %>%
@@ -61,68 +66,106 @@ goi_01_blastx
 ```
 
 ```{r}
-
+names(goi_01_blastx)
 ```
 
+
 **3.Display the top 10 blastx hits, based on e_value, for this blastx search? (Include the Scientific Name, Cluster Anscestor, Cluster Representative Sequence, Max Score, Query Cover, E value and Percent Identity)**
+
 ```{r}
 top10_blastx <- goi_01_blastx %>%
   arrange(e_value) %>%
   slice_head(n = 10) %>%
   select(scientific_name,
-         cluster_ancestor,
-         cluster_representative_sequence,
+         description,
+         accession,
          max_score,
          query_cover,
          e_value,
-         percent_identity)
+         per_ident)
 top10_blastx
 ```
  
 
 **4. create a plot that shows the different in percent identity for each Scientific Name of the top 10 blastx hits. Make sure to label your axes and give your plot a title.**
 ```{r}
-
+top10_blastx %>%
+  ggplot(aes(x = reorder(scientific_name, per_ident),
+             y = per_ident)) +
+  geom_col(fill = "pink", color = "black") +
+  coord_flip() +
+  labs(
+    title = "Percent Identity of Top 10 BLASTX Hits",
+    x = "Scientific Name",
+    y = "Percent Identity"
+  )
 ```
 
 
 **5 Perform a blastn search using `goi_01.txt` as the query and the "core_nt" database. Download the alignment description in CSV format, change the name to "goi_01_blastn.csv" and store in the homework/data folder. Read the csv file into R and clean the column names. Save the cleaned data frame as goi_01_blastn.**
 ```{r}
+goi_01_blastn <- read_csv("data/goi_01_blastn.csv") %>%
+  clean_names()
 
+goi_01_blastn
 ```
 
 ```{r}
-
+names(goi_01_blastn)
 ```
+
 
 **6. What was the top blastn hit, based on e_value, for this blastn search? (Include the Cluster Ancestor, Cluster, Representative Sequence, Max Score, Query Cover, E value, Percent Identity and Accession Link)**
 ```{r}
+top_blastn <- goi_01_blastn %>%
+  arrange(e_value) %>%
+  slice_head(n = 1) %>%
+  select(description,
+         scientific_name,
+         accession,
+         max_score,
+         query_cover,
+         e_value,
+         per_ident)
 
+top_blastn
 ```
+Accession Link:
+
+```{r}
+#https://www.ncbi.nlm.nih.gov/nuccore/AAC13173
+```
+
 
 **7. Based on the blastx and blastn results, what do you think this gene is and what bacteria do you think it came from?**
 ```{}
-
+Based on the blastx and blastn results, I think the gene likely comes from Yersinia pestis. It appears to focus on a protein whcih is involved in bacterial pathogenicity.
 ```
 
 **8. For the top blastn hit, click on the accession link for this bacteria and download the coding sequences as a FASTA Protein file. Read the fasta file into R using the Biostrings package and store it in an object called `goi_blastn_hit`.**
-```{r}
-
-```
 
 ```{r}
+goi_blastn_hit <- readAAStringSet("data/goi_blastn_hit.fasta")
 
+goi_blastn_hit
 ```
+
 
 **9. From the same organism, identify 5 other annotated genes? Do these genes suggest about the biology or virulence of this bacterium?** *Annotated genes can be found in the "CDS" section of the GenBank file. You can also find genes by going to summary page for the organism and looking at the "View annotated genes" section.*
 ```{r}
-
+#Five other annotated genes from Yersinia pestis include:
+  #1) caf1 (F1 capsular antigen)
+  #2) caf1A (capsule anchoring/export protein)
+  #3) caf1M (capsule chaperone)
+  #4) caf1R (capsule operon regulatory protein)
+  #5) ymt (murine toxin)
+#These genes are associated with capsule formation and regulation which are virulence factors that contribute to the Yersinia pestis's ability to avoid the immune system and establish infection.
 ```
 
 
 **10. Now that you have an idea of this bacteria's identity, what illness/disease do you think the patient has? What is the historical or public health significance of this disease? Based on the gene you identified, what role might this gene play in pathogenicity?**
 ```{}
-
+The illness and disease that the patient by possible have is a bacterial infection caused by Yersinia pestis, leading to the bubonic plague or pneumonic plague. The historical significance of this disease is the Black Death in the 14th century, which killed millions of people. This gene plays a role in zoonotic pathogenicity, where it is transmitted from rodents to humans via fleas, with some of these strains being highly virulent.
 ```
 
 

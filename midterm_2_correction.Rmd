@@ -42,9 +42,9 @@ polar_bears <-
 ```
 
 
-##Question 2:
+### Question 2:
 
-My Answer:
+#### My Answer:
 ```{r}
 polar_bears %>%
 summarize(across(everything(), ~ sum(is.na(.))))
@@ -62,13 +62,13 @@ polar_bears_no_nas <- polar_bears %>%
 polar_bears_no_nas
 ```
 
-My Mistake:
+##### My Mistake:
 I realized that I initially just summarized NA values and -999 values but didn't properly replace any of those values with actual NA values and visualize the missing data.
 
-Correction:
+##### Correction:
 I used replace_with_na_all() to convert the values to NA and summarized missing values with miss_var_summary(). I also visualized the missing values before and after cleaning with the naniar package.
 
-#Corrected Question 2
+### Corrected Question 2
 
 ```{r}
 summary(polar_bears)
@@ -91,9 +91,11 @@ gg_miss_var(polar_bears_no_nas) +
 labs(title = "Missing Values After Cleaning")
 ```
 ---
-##Question 4:
 
-My Answer:
+### Question 4:
+
+#### My Answer:
+
 ```{r}
 #polar_bears <- polar_bears %>%
 #separate(capture_date, c("year", "month", "day")) %>%
@@ -106,9 +108,13 @@ My Answer:
        #y="Number of Bears Sampled")
 ```
 
-Mistake: I was not able to properly extract the year from the capture_date and I also did not group by population, so the plot didn't run/correctly show sampling trends per population, which is why the code has also been commented out.
+##### My Mistake: 
+I was not able to properly extract the year from the capture_date and I also did not group by population, so the plot didn't run/correctly show sampling trends per population, which is why the code has also been commented out.
 
-Correction: I separated capture_date into year/month/day, grouped by year and population, and plotted lines and points for each of the bear populations using the polar_bears_no_nas data I had cleaned from my corrected answer to Question 2.
+##### Correction: 
+I separated capture_date into year/month/day, grouped by year and population, and plotted lines and points for each of the bear populations using the polar_bears_no_nas data I had cleaned from my corrected answer to Question 2.
+
+### Corrected Question 4
 
 ```{r}
 polar_bears_no_nas <- polar_bears_no_nas %>%
@@ -128,9 +134,9 @@ polar_bears_no_nas %>%
 
 ---
 
-##Question 7
+### Question 7
 
-My Answer:
+#### My Answer:
 
 ```{r}
 #fasting <- polar_bears %>%
@@ -142,10 +148,14 @@ My Answer:
 #fasting
 ```
 
-My Mistake: I used case_when() but then dropped all the non-fasting bears with drop_na(fasting), so the variable was incomplete. Because of this, the non-fasting category was missing as well. I also created a new obkect fasting instead of properly updating the polar_bears_no_nas data set.
+##### My Mistake: 
+I used case_when() but then dropped all the non-fasting bears with drop_na(fasting), so the variable was incomplete. Because of this, the non-fasting category was missing as well. I also created a new obkect fasting instead of properly updating the polar_bears_no_nas data set.
 
 
-Correction: I used mutate() on polar_bears_no_nas and created a fasting variable that is complete with "fasting" and "non-fasting" labels for all the rows, without dropping any data.
+##### Correction: 
+I used mutate() on polar_bears_no_nas and created a fasting variable that is complete with "fasting" and "non-fasting" labels for all the rows, without dropping any data.
+
+### Corrected Question 7
 
 ```{r}
 polar_bears_no_nas <- polar_bears_no_nas %>%
@@ -158,9 +168,9 @@ polar_bears_no_nas <- polar_bears_no_nas %>%
 
 ---
 
-##Question 8
+### Question 8
 
-My Answer: 
+#### My Answer: 
 ```{r}
 #polar_bears %>%
  # select(year, population, fasting) %>%
@@ -174,9 +184,13 @@ My Answer:
        #y = "Count")
 ```
 
-My Mistake: I used filter(fasting = "fasting") instead of ==, so the filter didn't work correctly, and this question was also incorrect due to my work for Question 7 being incorrect. I also did not properly group by both year and population, and mapped the fill command incorrectly, so the plot ultimately failed to show the number of fasting bears per year AND population.
+##### My Mistake: 
+I used filter(fasting = "fasting") instead of ==, so the filter didn't work correctly, and this question was also incorrect due to my work for Question 7 being incorrect. I also did not properly group by both year and population, and mapped the fill command incorrectly, so the plot ultimately failed to show the number of fasting bears per year AND population.
 
-Correction: I corrected the filter command to fasting == "fasting", grouped by year and population, and made sure the fill command was = to population correctly. This gives the correct line plot.
+##### Correction: 
+I corrected the filter command to fasting == "fasting", grouped by year and population, and made sure the fill command was = to population correctly. This gives the correct line plot.
+
+### Corrected Question 8
 
 ```{r}
 polar_bears_no_nas %>%
@@ -194,9 +208,9 @@ polar_bears_no_nas %>%
 
 ---
 
-##Question 9
+### Question 9
 
-My Answer:
+#### My Answer:
 
 ```{r}
 #bearslong <- polar_bears %>%
@@ -208,9 +222,13 @@ My Answer:
 #ggmap(bearsmap)
 ```
 
-My Mistake: I made tibbles instead of vectors that are numeric for make_bbox(), so the bounding box didn't work properly. I also didn't plot the points colored by population, so the map didn't show which bears belonged to which population.
+##### My Mistake: 
+I made tibbles instead of vectors that are numeric for make_bbox(), so the bounding box didn't work properly. I also didn't plot the points colored by population, so the map didn't show which bears belonged to which population.
 
-Correction: I converted latitude and longitude to numeric vectors and then created a proper bounding box. I then also made a static map with get_stadiamap() and plotted the bear locations with geom_point() colored by population, which shows the distribution clearly.
+##### Correction: 
+I converted latitude and longitude to numeric vectors and then created a proper bounding box. I then also made a static map with get_stadiamap() and plotted the bear locations with geom_point() colored by population, which shows the distribution clearly.
+
+### Corrected Question 9
 
 ```{r}
 polar_bears_no_nas %>%
@@ -244,11 +262,11 @@ ggmap(bears_map) +
 
 ---
 
-##Question 10
+### Question 10
 
-My Answer:
+#### My Answer:
 
-#```{r, eval=F, echo=T}
+```{r, eval=F, echo=T}
 #library(shiny)
 
 #ui <- fluidPage(
@@ -271,11 +289,15 @@ My Answer:
 #}
 
 #shinyApp(ui, server)
-#```
+```
 
-My Mistake: I filtered using input$x, which does not exist, and I also used a bar plot of sex instead of plotting the creatinine ratio. The app therefore did not result in users being able to choose the fill variable, which then led to inconsistencies with the rest of the problem.
+##### My Mistake: 
+I filtered using input$x, which does not exist, and I also used a bar plot of sex instead of plotting the creatinine ratio. The app therefore did not result in users being able to choose the fill variable, which then led to inconsistencies with the rest of the problem.
 
-Correction: I created a Shiny app with a boxplot of un_creat_ratio by population and then let users select the fill variable by sex, mating, age_class, denning, or fasting. This would also allow for the range of values for both population sto be shown and to let the person using the app to choose a variable by grouping.
+##### Correction: 
+I created a Shiny app with a boxplot of un_creat_ratio by population and then let users select the fill variable by sex, mating, age_class, denning, or fasting. This would also allow for the range of values for both population sto be shown and to let the person using the app to choose a variable by grouping.
+
+### Corrected Question 10
 
 ```{r, eval=F, echo=T}
 library(shiny)
